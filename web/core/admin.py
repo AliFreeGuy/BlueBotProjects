@@ -19,9 +19,8 @@ class ChannelsModelAdmin(admin.ModelAdmin):
 
 @admin.register(AdsModels)
 class AdsModelsAdmin(admin.ModelAdmin):
-    list_display = ['type', 'btn_name', 'btn_url', 'text']
-    search_fields = ['type', 'btn_name']
-    list_filter = ['type']
+    list_display = [ 'url', 'name']
+    search_fields = ['name']
 
 
 @admin.register(BotsModel)

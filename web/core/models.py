@@ -32,14 +32,12 @@ class ChannelsModel(models.Model):
 
 
 class AdsModels(models.Model):
-    AD_TYPES = [('text', 'text'), ('btn', 'btn')]
-    type = models.CharField(max_length=10, choices=AD_TYPES)
-    btn_name = models.CharField(max_length=256)
-    btn_url = models.CharField(max_length=256)
-    text = models.TextField(null=True, blank=True)
+    
+    name = models.CharField(max_length=256)
+    url = models.CharField(max_length=256)
 
     def __str__(self) -> str:
-        return f"{self.type} - {self.btn_name}"
+        return f"{self.name} "
     
     class Meta:
         verbose_name = "Ads"

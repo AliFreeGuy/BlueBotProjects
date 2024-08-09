@@ -3,19 +3,33 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from core.models import BotsModel
 from django.shortcuts import get_object_or_404 , render
+from . import serializers
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework import status
+from .models import BotsModel, LanguagesModel
+from .serializers import CompressorSettingSerializer
+from rest_framework.response import Response
 from core.tasks import send_message
 from .models import  User , UserPaymentModel
-from compressor.models import CompressorUser  , CompressorPlansModel,CompressorSettingModel
 import requests
 from django.conf import settings
+from compressor.models import CompressorPlansModel , CompressorUser
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 import json
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from core.models import BotsModel,LanguagesModel
+from compressor.models import CompressorSettingModel , CompressorTextModel 
+from django.shortcuts import get_object_or_404
+from django.core.exceptions import ObjectDoesNotExist
+from django.utils.translation import gettext_lazy as _
+
 
 
 
@@ -155,3 +169,23 @@ class PaymentVerifyView(APIView):
 
 
 
+
+
+class SettingsAPIView(APIView):
+    def post(self, request, *args, **kwargs):
+        bot_username = request.data.get('bot')
+        lang_code = request.data.get('lang')
+
+        if not bot_username:
+            return Response({"detail": _("Bot username is required.")}, status=status.HTTP_400_BAD_REQUEST)
+        
+        bot = get_object_or_404(BotsModel, username=bot_username)
+
+        try:
+            settings = CompressorSettingModel.objects.get(bot=bot)
+        except CompressorSettingModel.DoesNotExist:
+            return Response({"detail": _("Settings not found for the specified bot.")}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = CompressorSettingSerializer(settings, context={'lang_code': lang_code})
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
