@@ -152,6 +152,12 @@ class CompressorTextModel(models.Model):
     user_ref_text = models.TextField(default='متن دعوت کاربر')
     placeholder_text = models.CharField(max_length=128 , default='ویدیو ارسال کنید ...')
 
+    profile_btn = models.CharField(max_length=25 , default='پروفایل')
+    setting_btn = models.CharField(max_length=25 , default='راهنما')
+    help_btn = models.CharField(max_length=25 , default='تنظیمات')
+    support_btn  = models.CharField(max_length=25 , default='پشتیبانی')
+    plans_btn = models.CharField(max_length=25 , default='اشتراک')
+
     class Meta:
         unique_together = ('bot', 'lang')
         verbose_name = "Text"

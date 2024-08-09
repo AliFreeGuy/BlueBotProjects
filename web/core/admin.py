@@ -25,7 +25,7 @@ class AdsModelsAdmin(admin.ModelAdmin):
 
 @admin.register(BotsModel)
 class BotsModelAdmin(admin.ModelAdmin):
-    list_display = ['type', 'username', 'bot_token', 'api_id', 'api_hash', 'session_string']
+    list_display = ['type', 'username', 'bot_token', 'api_id', 'api_hash']
     search_fields = ['username', 'bot_token', 'api_id']
     list_filter = ['type', 'api_id']
 
