@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import LanguagesModel, ChannelsModel, AdsModels, BotsModel ,SendMessage
+from .models import LanguagesModel, ChannelsModel, AdsModels, BotsModel ,SendMessage ,UserPaymentModel
 from django.utils.html import format_html
 import jdatetime
 
@@ -74,3 +74,35 @@ class SendMessageAdmin(admin.ModelAdmin):
         return super().formfield_for_manytomany(db_field, request, **kwargs)
 
 admin.site.register(SendMessage, SendMessageAdmin)
+
+
+
+
+
+@admin.register(UserPaymentModel)
+class UserPaymentAdmin(admin.ModelAdmin):
+    list_display = ('get_user_full_name', 'get_user_chat_id', 'bot', 'amount', 'status', 'plan', 'get_creation_jalali')
+    list_filter = ('status', 'bot', 'creation')
+    search_fields = ('user__chat_id', 'user__full_name', 'bot__username' , 'bot__tag', 'key')
+    ordering = ('-creation',)
+
+    def get_user_full_name(self, obj):
+        return obj.user.full_name
+    get_user_full_name.admin_order_field = 'user'
+    get_user_full_name.short_description = 'User Full Name'
+
+    def get_user_chat_id(self, obj):
+        return obj.user.chat_id
+    get_user_chat_id.admin_order_field = 'user'
+    get_user_chat_id.short_description = 'User Chat ID'
+
+    def get_creation_jalali(self, obj):
+        creation_jalali = jdatetime.datetime.fromgregorian(datetime=obj.creation)
+        return creation_jalali.strftime('%Y/%m/%d %H:%M:%S')
+    get_creation_jalali.admin_order_field = 'creation'
+    get_creation_jalali.short_description = 'Creation (Jalali)'
+
+    def get_bot_name(self, obj):
+        return obj.bot.username
+    get_bot_name.admin_order_field = 'bot'
+    get_bot_name.short_description = 'Bot Name'

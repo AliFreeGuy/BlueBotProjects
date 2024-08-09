@@ -1,7 +1,7 @@
 
 from celery import shared_task
 import logging
-from core.models import SendMessage
+from core.models import SendMessage , BotsModel
 from compressor.models import CompressorUser
 from collections import defaultdict
 from pyrogram import Client 
@@ -142,3 +142,33 @@ def ads_btn(ads):
 
 
 
+
+
+
+
+
+@shared_task
+def send_message(chat_id, text , bot_id):
+    bot = BotsModel.objects.get(id = bot_id)
+    if settings.DEBUG:
+            client = Client(
+                'send_payment_message',
+                session_string=bot.session_string,
+                api_id=bot.api_id,
+                api_hash=bot.api_hash,
+                proxy=PROXY
+            )
+    else:
+            client = Client(
+                'send_payment_message',
+                session_string=bot.session_string,
+                api_id=bot.api_id,
+                api_hash=bot.api_hash,
+            )
+    try:
+        with client :
+            client.send_message(int(chat_id) , text = text)
+
+    except Exception as e :
+        # Handle the case where the user does not exist
+        print(f'send payment message error : {str(e)}')

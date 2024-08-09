@@ -64,21 +64,21 @@ class BotsModel(models.Model):
 
 
 
-# class UserPaymentModel(models.Model):
-#     user  = models.ForeignKey(User , on_delete=models.CASCADE , related_name='payments')
-#     bot = models.ForeignKey(BotsModel , on_delete=models.CASCADE  , related_name='payments')
-#     status = models.BooleanField(default=False)
-#     amount = models.BigIntegerField()
-#     key = models.CharField(max_length=300)
-#     plan = models.IntegerField(default=0)
-#     creation = models.DateTimeField(auto_now_add=True)
+class UserPaymentModel(models.Model):
+    user  = models.ForeignKey(User , on_delete=models.CASCADE , related_name='payments')
+    bot = models.ForeignKey(BotsModel , on_delete=models.CASCADE  , related_name='payments')
+    status = models.BooleanField(default=False)
+    amount = models.BigIntegerField()
+    key = models.CharField(max_length=300)
+    plan = models.IntegerField(default=0)
+    creation = models.DateTimeField(auto_now_add=True)
 
-#     def __str__(self) -> str:
-#         return f'{str(self.user)} - {str(self.amount)} - {str(self.status)}'
+    def __str__(self) -> str:
+        return f'{str(self.user)} - {str(self.amount)} - {str(self.status)}'
     
-#     class Meta:
-#                 verbose_name = "Paymnet"
-#                 verbose_name_plural = "Paymnet"
+    class Meta:
+                verbose_name = "Paymnet"
+                verbose_name_plural = "Paymnet"
 
 
 
