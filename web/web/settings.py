@@ -34,7 +34,8 @@ INSTALLED_APPS = [
     'jazzmin',
     'rest_framework',
     'rest_framework.authtoken',
-    'celery',
+    'django_celery_results',
+
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -42,8 +43,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
+
+    'core.apps.CoreConfig',
     'accounts.apps.AccountsConfig',
+    'compressor.apps.CompressorConfig',
+
 ]
 
 MIDDLEWARE = [
@@ -112,11 +116,12 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Tehran'
+
+USE_TZ = True
 
 USE_I18N = True
 
-USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
