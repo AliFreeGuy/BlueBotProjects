@@ -1,6 +1,16 @@
 from rest_framework import serializers
-from compressor.models import CompressorSettingModel   , CompressorPlansModel , CompressorTextModel
+from compressor.models import CompressorSettingModel   , CompressorPlansModel , CompressorTextModel , CompressorUser
 from core.models import ChannelsModel , AdsModels  ,BotsModel , LanguagesModel
+from accounts.models import User
+
+
+
+
+class CompressorUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CompressorUser
+        fields = '__all__'  
+
 
 
 
@@ -76,3 +86,37 @@ class CompressorSettingSerializer(serializers.ModelSerializer):
             return {}
 
         return CompressorTextSerializer(texts).data
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['chat_id', 'full_name', 'wallet', 'phone', 'is_admin', 'is_active', 'creation']
+
+class CompressorUserSerializer(serializers.ModelSerializer):
+    user = UserSerializer()  # Nested serializer for user information
+    plan = serializers.PrimaryKeyRelatedField(queryset=CompressorPlansModel.objects.all(), required=False)
+    lang = serializers.SlugRelatedField(queryset=LanguagesModel.objects.all(), slug_field='code', required=False)  # Use code instead of id
+    quality = serializers.ChoiceField(choices=[('quality_0', 'Quality 0'), ('quality_1', 'Quality 1'), ('quality_2', 'Quality 2'), ('quality_3', 'Quality 3')], required=False, allow_null=True)
+
+    class Meta:
+        model = CompressorUser
+        fields = ['user', 'plan', 'bot', 'lang', 'expiry', 'volume', 'quality']
+
+    def update(self, instance, validated_data):
+        user_data = validated_data.pop('user', {})
+        user = instance.user
+
+        # Update user fields
+        for attr, value in user_data.items():
+            if hasattr(user, attr):
+                setattr(user, attr, value)
+        user.save()
+
+        # Update CompressorUser fields
+        for attr, value in validated_data.items():
+            if hasattr(instance, attr):
+                setattr(instance, attr, value)
+        instance.save()
+
+        return instance

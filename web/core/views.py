@@ -1,6 +1,10 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework import generics
+from rest_framework.response import Response
+from compressor.models import CompressorUser
+from .serializers import CompressorUserSerializer
 from core.models import BotsModel
 from django.shortcuts import get_object_or_404 , render
 from . import serializers
@@ -189,3 +193,69 @@ class SettingsAPIView(APIView):
         serializer = CompressorSettingSerializer(settings, context={'lang_code': lang_code})
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
+
+
+class UserAPIView(APIView):
+
+    def post(self, request):
+        chat_id = request.data.get('chat_id')
+        full_name = request.data.get('full_name')
+        plan_id = request.data.get('plan')
+        expiry = request.data.get('expiry')
+        volume = request.data.get('volume')
+        is_active = request.data.get('is_active')
+        quality = request.data.get('quality')
+        language_code = request.data.get('lang')  # دریافت کد زبان
+        bot_id = request.data.get('bot')  # دریافت شناسه ربات
+        bot_type = request.data.get('type')
+
+        if not chat_id or not bot_type:
+            return Response({"error": "chat_id and bot_type are required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Retrieve or create the User
+        user, user_created = User.objects.get_or_create(chat_id=chat_id, defaults={'full_name': full_name})
+
+        if not user_created:
+            # Update user information if it already exists
+            if full_name:
+                user.full_name = full_name
+            if 'wallet' in request.data:
+                user.wallet = request.data.get('wallet')
+            if 'phone' in request.data:
+                user.phone = request.data.get('phone')
+            if is_active is not None:
+                user.is_active = is_active
+            user.save()
+
+        if bot_type == 'compressor':
+            # Retrieve or create the CompressorUser
+            compressor_user, created = CompressorUser.objects.get_or_create(user=user)
+
+            # Update the CompressorUser information
+            if plan_id:
+                plan = CompressorPlansModel.objects.filter(id=plan_id).first()
+                if plan:
+                    compressor_user.plan = plan
+            if expiry:
+                compressor_user.expiry = expiry
+            if volume is not None:
+                compressor_user.volume = volume
+            if quality:
+                compressor_user.quality = quality
+            if language_code:
+                language = LanguagesModel.objects.filter(code=language_code).first()
+                if language:
+                    compressor_user.lang = language
+            if bot_id:
+                bot = BotsModel.objects.filter(id=bot_id).first()
+                if bot:
+                    compressor_user.bot = bot
+
+            compressor_user.save()
+            serializer = CompressorUserSerializer(compressor_user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
+        else:
+            return Response({"error": "Invalid bot type"}, status=status.HTTP_400_BAD_REQUEST)
