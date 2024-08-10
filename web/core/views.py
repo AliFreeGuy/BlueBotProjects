@@ -49,6 +49,9 @@ CallbackURL = 'http://127.0.0.1:8000/api/verify/'
 
 @method_decorator(csrf_exempt, name='dispatch')
 class PaymentCreateView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
         amount = request.data.get('amount')
         chat_id = request.data.get('chat_id')
@@ -109,6 +112,7 @@ class PaymentCreateView(APIView):
 
 
 class PaymentVerifyView(APIView):
+    
     def get(self, request):
         authority = request.GET.get('Authority')
 
@@ -176,6 +180,9 @@ class PaymentVerifyView(APIView):
 
 
 class SettingsAPIView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def post(self, request, *args, **kwargs):
         bot_username = request.data.get('bot')
         lang_code = request.data.get('lang')
@@ -199,6 +206,8 @@ class SettingsAPIView(APIView):
 
 
 class UserAPIView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
         chat_id = request.data.get('chat_id')
