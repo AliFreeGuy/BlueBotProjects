@@ -28,7 +28,9 @@ class CompressorPlansModel(models.Model):
     bot = models.ForeignKey(BotsModel , related_name='plans' , on_delete=models.CASCADE)
     tag = models.SlugField(max_length=128, unique=True, default='compressor')
     name = models.CharField(max_length=128, unique=True)
+    name_en = models.CharField(max_length=128, unique=True , null=True , blank=True)
     description = models.TextField()
+    description_en = models.TextField(null=True , blank=True)
     day = models.IntegerField(default=0)
     volume = models.IntegerField(default=0)
     price = models.PositiveBigIntegerField(default=0)
@@ -152,11 +154,14 @@ class CompressorTextModel(models.Model):
     user_ref_text = models.TextField(default='متن دعوت کاربر')
     placeholder_text = models.CharField(max_length=128 , default='ویدیو ارسال کنید ...')
     editor_progress_text = models.TextField(default='متن هنگام ادیت ویدیو ....')
+    plans_text = models.TextField(default='متن اشتراک ها')
+
     profile_btn = models.CharField(max_length=25 , default='پروفایل')
     setting_btn = models.CharField(max_length=25 , default='راهنما')
     help_btn = models.CharField(max_length=25 , default='تنظیمات')
     support_btn  = models.CharField(max_length=25 , default='پشتیبانی')
     plans_btn = models.CharField(max_length=25 , default='اشتراک')
+    i_joined_btn_text = models.TextField(max_length=128 , default='عضو شدم')
 
     class Meta:
         unique_together = ('bot', 'lang')
