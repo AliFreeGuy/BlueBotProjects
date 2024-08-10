@@ -151,7 +151,7 @@ class CompressorTextModel(models.Model):
     user_profile_text = models.TextField(default='متن زیر اطلاعات پروفایل کاربر')
     user_ref_text = models.TextField(default='متن دعوت کاربر')
     placeholder_text = models.CharField(max_length=128 , default='ویدیو ارسال کنید ...')
-
+    editor_progress_text = models.TextField(default='متن هنگام ادیت ویدیو ....')
     profile_btn = models.CharField(max_length=25 , default='پروفایل')
     setting_btn = models.CharField(max_length=25 , default='راهنما')
     help_btn = models.CharField(max_length=25 , default='تنظیمات')
