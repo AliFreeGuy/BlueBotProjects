@@ -53,7 +53,7 @@ class CompressorUserAdmin(admin.ModelAdmin):
     
     def expiry_jalali(self, obj):
         return to_jalali(obj.expiry)
-    expiry_jalali.short_description = 'تاریخ انقضا'
+    expiry_jalali.short_description = 'expiry'
 
 # ثبت مدل CompressorTextModel در ادمین
 @admin.register(CompressorTextModel)
@@ -69,4 +69,4 @@ class UserRefAdmin(admin.ModelAdmin):
     
     def creation_jalali(self, obj):
         return to_jalali(obj.creation)
-    creation_jalali.short_description = 'تاریخ ایجاد'
+    creation_jalali.short_description = 'creation'
