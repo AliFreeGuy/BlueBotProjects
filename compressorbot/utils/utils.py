@@ -41,6 +41,10 @@ def convert_data_types(data):
     }
     
     return converted_data
+
+
+
+
 def file_checker(unique_id , quality):
     vids_data = [cache.redis.hgetall(i) for i in cache.redis.keys(f'vid_data:*')]
     vid_data = None 

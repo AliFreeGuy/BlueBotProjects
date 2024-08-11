@@ -111,9 +111,8 @@ def editor(self, data ):
                 text = f'{vid_editor_text}\n\n📥{str(pbar)}'
                 msg_id = int(data['bot_msg_id']) + 1
                 try:
-                    s = bot.edit_message_text(chat_id=int(data['chat_id']), text=text, message_id=msg_id,
+                    bot.edit_message_text(chat_id=int(data['chat_id']), text=text, message_id=msg_id,
                                           reply_markup=cancel_markup(callback_data=f'cancel-editor:vid_data:{str(data["id"])}' , setting=setting))
-                    print(s)
                 except Exception as e:
                     logger.warning(e)
 
@@ -121,32 +120,37 @@ def editor(self, data ):
 
 #     # Apply video filters and settings
     quality =data['quality']
-    cmd = [
-    "ffmpeg", "-i", video_name,
-    "-r", "15",
-    "-b:v", f"{getattr(setting, quality)}k",
-    "-b:a", "64k",
-    "-map_metadata", "0",
-    "-movflags", "+faststart",
-    f'{file_path}/output.mp4'
-]
+    crf_value = getattr(setting, quality, 30)  # پیش‌فرض به 30 تنظیم شده است
 
+    cmd = [
+        "ffmpeg", "-i", video_name,
+        "-r", "15",
+        "-c:v", "libx265", 
+        "-crf", str(crf_value),
+        "-preset", "medium",
+        "-c:a", "aac",
+        "-b:a", "64k",
+        "-map_metadata", "0",
+        "-movflags", "+faststart",
+        f'{file_path}/output.mp4'
+    ]
+    print(cmd)
     # # Process the video with ffmpeg and track progress
-    ff = FfmpegProgress(cmd)
-    for progress in ff.run_command_with_progress():
-        pdata = int(str(progress).split('.')[0])
-        pbar = progressbar(pdata * 2 + 100, 400, str(self.request.id))
-        pbar_text = pbar['text']
-        if pbar['is_update'] == 'True':
-            vid_editor_text = setting.texts.editor_progress_text
-            text = f'{vid_editor_text}\n\n📥{str(pbar_text)}'
-            msg_id = int(data['bot_msg_id']) + 1
-            try:
-                data = bot.edit_message_text(chat_id=int(data['chat_id']), text=text, message_id=msg_id,
-                                      reply_markup=cancel_markup(callback_data=f'cancel-editor:vid_data:{str(data["id"])}' ,setting=setting))
-                print(data)
-            except Exception as e:
-                logger.error(e)
+    with bot :
+        ff = FfmpegProgress(cmd)
+        for progress in ff.run_command_with_progress():
+            pdata = int(str(progress).split('.')[0])
+            pbar = progressbar(pdata * 2 + 100, 400, str(self.request.id))
+            pbar_text = pbar['text']
+            if pbar['is_update'] == 'True':
+                vid_editor_text = setting.texts.editor_progress_text
+                text = f'{vid_editor_text}\n\n📥{str(pbar_text)}'
+                msg_id = int(data['bot_msg_id']) + 1
+                try:
+                    bot.edit_message_text(chat_id=int(data['chat_id']), text=text, message_id=msg_id,
+                                        reply_markup=cancel_markup(callback_data=f'cancel-editor:vid_data:{str(data["id"])}' ,setting=setting))
+                except Exception as e:
+                    logger.error(e)
 
     with bot:
         def upload_progress(current, total):

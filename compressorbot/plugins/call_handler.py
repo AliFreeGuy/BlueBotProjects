@@ -84,8 +84,10 @@ async def set_editor_quality(bot, call, user, setting):
     vid_data = cache.redis.hgetall(vid_key)
     video_quality = call.data.split(':')[0].replace('editor_', '')
     
+    
     if vid_data:
-        file_checker_data = file_checker(unique_id=vid_data['unique_id'], quality=video_quality)
+        file_checker_data = file_checker(unique_id=vid_data['unique_id'], quality=f'quality_{video_quality}')
+        print(file_checker_data)
         
         if file_checker_data:
             await bot.delete_messages(call.from_user.id, call.message.id)

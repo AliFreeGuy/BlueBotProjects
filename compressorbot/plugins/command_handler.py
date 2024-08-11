@@ -139,7 +139,7 @@ async def editor_manager(bot ,msg ,user ,setting ):
                 vid_data_key = f'vid_data:{random_code}'
                 print(data)
                 cache.redis.hmset(vid_data_key , data)
-                await msg.reply_text('hiuser', quote=True , reply_markup  =btn.vid_editor_quality(vid_key =vid_data_key))
+                await msg.reply_text(setting.texts.editor_progress_text, quote=True , reply_markup  =btn.vid_editor_quality(vid_key =vid_data_key))
 
 
     
