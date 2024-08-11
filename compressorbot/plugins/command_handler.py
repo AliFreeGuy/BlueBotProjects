@@ -54,32 +54,17 @@ async def support_handler(bot, msg, user, setting):
     await msg.reply_text(setting.texts.support_text, quote=True)
 
 
-
-
-
-
-
-
-
 async def plans_handler(bot, msg, user, setting):
     plans = setting.plans
     await msg.reply_text(text=setting.texts.plans_text, quote=True , reply_markup = btn.plans_btn(plans , setting , user ))
 
-
-
 async def profile_handler(bot, msg, user, setting):
     ads = setting.ads
-    if ads:
-        await msg.reply_text(txt.profile_text(user , setting), quote=True, reply_markup=btn.ads_btn(ads))
-    else:
-        await msg.reply_text(txt.profile_text(user , setting), quote=True)
-
-
-
+    if ads:await msg.reply_text(txt.profile_text(user , setting), quote=True, reply_markup=btn.ads_btn(ads))
+    else:await msg.reply_text(txt.profile_text(user , setting), quote=True)
 
 
 async def setting_handler(bot, msg, user, setting):    
-
     await msg.reply_text(text=setting.texts.setting_text, reply_markup=btn.setting_btn(user = user , setting=setting), quote=True)
 
 
