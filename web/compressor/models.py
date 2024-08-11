@@ -157,8 +157,8 @@ class CompressorTextModel(models.Model):
     plans_text = models.TextField(default='متن اشتراک ها')
 
     profile_btn = models.CharField(max_length=25 , default='پروفایل')
-    setting_btn = models.CharField(max_length=25 , default='راهنما')
-    help_btn = models.CharField(max_length=25 , default='تنظیمات')
+    setting_btn = models.CharField(max_length=25 , default='تنظیمات')
+    help_btn = models.CharField(max_length=25 , default='راهنما')
     support_btn  = models.CharField(max_length=25 , default='پشتیبانی')
     plans_btn = models.CharField(max_length=25 , default='اشتراک')
     i_joined_btn_text = models.TextField(max_length=128 , default='عضو شدم')
