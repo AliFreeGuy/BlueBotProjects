@@ -64,3 +64,60 @@ def join_channels_url(channels , btn_name):
     buttons.append([InlineKeyboardButton(text=btn_name,callback_data='join:joined')])
     return InlineKeyboardMarkup(buttons)
 
+
+
+
+def ads_btn(ads):
+    buttons = []
+    for  ad in ads:
+        buttons.append([InlineKeyboardButton(text=ad.name, url=ad.url)])
+    return InlineKeyboardMarkup(buttons)
+
+
+
+
+def setting_btn(user, setting):
+    user_lang = user.lang
+    user_quality = user.quality
+
+    print(user_quality)
+    buttons = []
+
+    # تنظیم دکمه‌های کیفیت
+    if user_lang == 'fa':
+        q1 = f'✔️ کیفیت خوب' if user_quality == 'quality_1' else 'کیفیت خوب'
+        q2 = f'✔️ کیفیت متوسط' if user_quality == 'quality_2' else 'کیفیت متوسط'
+        q3 = f'✔️ کیفیت کم' if user_quality == 'quality_3' else 'کیفیت کم'
+        quality_btn = [
+            InlineKeyboardButton(text=q1, callback_data='setting:quality_1'),
+            InlineKeyboardButton(text=q2, callback_data='setting:quality_2'),
+            InlineKeyboardButton(text=q3, callback_data='setting:quality_3'),
+        ]
+    else:
+        q1 = f'✔️ good quality' if user_quality == 'quality_1' else 'good quality'
+        q2 = f'✔️ mid quality' if user_quality == 'quality_2' else 'mid quality'
+        q3 = f'✔️ low quality' if user_quality == 'quality_3' else 'low quality'
+        quality_btn = [
+            InlineKeyboardButton(text=q1, callback_data='setting:quality_1'),
+            InlineKeyboardButton(text=q2, callback_data='setting:quality_2'),
+            InlineKeyboardButton(text=q3, callback_data='setting:quality_3'),
+        ]
+
+    buttons.append(quality_btn)
+
+    # تنظیم دکمه‌های زبان
+    lang_buttons = []
+    for i in range(0, len(setting.langs), 2):
+        row_buttons = []
+        for j in range(i, min(i + 2, len(setting.langs))):
+            lang_code = setting.langs[j]
+            text = f'✔️ {lang_code.name}' if lang_code.code == user_lang else lang_code.name
+            callback_data = f'setting:lang_{lang_code.code}'[:64]  # محدود کردن طول callback_data
+            row_buttons.append(InlineKeyboardButton(text=text, callback_data=callback_data))
+        lang_buttons.append(row_buttons)
+
+    # افزودن دکمه‌های زبان به لیست دکمه‌ها
+    buttons.extend(lang_buttons)
+
+    # تبدیل لیست دکمه‌ها به InlineKeyboardMarkup
+    return InlineKeyboardMarkup(buttons)

@@ -29,8 +29,8 @@ async def callback_manager(bot, call):
     
 
     
-#     elif status == 'setting':
-#         await setting_handler(bot , call )
+    elif status == 'setting':
+        await setting_handler(bot , call , user , setting  )
     
     elif status == 'plans' :
         await plans_call_handler(bot , call , user , setting )
@@ -162,18 +162,49 @@ async def back_to_plans(bot , call , user, setting  ):
 
 
 
-# async def setting_handler(bot , call ):
-#     try :
-#         user = con.user(chat_id=call.from_user.id , full_name=call.from_user.first_name )
-#         quality_data = call.data.replace('setting:' , '')
+async def setting_handler(bot , call , user , setting  ):
+    data = call.data.split(":")[1]
 
-#         if user.quality == quality_data :
-#             user = con.user(chat_id=call.from_user.id , full_name=call.from_user.first_name , quality='none')
-#         else :
-#             user = con.user(chat_id=call.from_user.id , full_name=call.from_user.first_name , quality=quality_data)
-#         await bot.edit_message_text(chat_id = call.from_user.id , text = con.setting.setting_text , reply_markup = btn.setting_btn(user) , message_id = call.message.id )
-#     except Exception as e :
-#         logger.info(str(e))
+
+    if data.startswith('lang_'):
+        lang = data.replace('lang_' , '')
+        if user.lang != lang :
+            user= con.user(chat_id = call.from_user.id , lang = lang)
+            setting = con.setting(lang=user.lang)
+            await bot.send_message(chat_id = call.from_user.id ,text = setting.texts.start_text, reply_markup = btn.user_panel_menu(setting))
+            await bot.edit_message_text(chat_id = call.from_user.id , text=setting.texts.setting_text, reply_markup=btn.setting_btn(user = user , setting=setting), message_id = call.message.id)
+
+    elif data.startswith('quality_'):
+
+   
+        if data == user.quality :
+            user = con.user(chat_id = call.from_user.id , quality = 'quality_0')
+        else :
+            user = con.user(chat_id = call.from_user.id , quality =data)
+        await bot.edit_message_text(chat_id = call.from_user.id , text=setting.texts.setting_text, reply_markup=btn.setting_btn(user = user , setting=setting), message_id = call.message.id)
+
+
+
+
+
+
+
+
+
+
+        
+
+    # try :
+    #     user = con.user(chat_id=call.from_user.id , full_name=call.from_user.first_name )
+    #     quality_data = call.data.replace('setting:' , '')
+
+    #     if user.quality == quality_data :
+    #         user = con.user(chat_id=call.from_user.id , full_name=call.from_user.first_name , quality='none')
+    #     else :
+    #         user = con.user(chat_id=call.from_user.id , full_name=call.from_user.first_name , quality=quality_data)
+    #     await bot.edit_message_text(chat_id = call.from_user.id , text = con.setting.setting_text , reply_markup = btn.setting_btn(user) , message_id = call.message.id )
+    # except Exception as e :
+    #     logger.info(str(e))
 
 
 

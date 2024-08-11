@@ -18,7 +18,6 @@ async def handler_manager(bot, msg):
     if user.lang:setting = con.setting(lang=user.lang)
     else:setting = con.setting()
 
-    print(setting)
     btns = {
         f'🎫 {setting.texts.profile_btn}': profile_handler,
         f'🆘 {setting.texts.help_btn}': help_handler,
@@ -60,8 +59,6 @@ async def support_handler(bot, msg, user, setting):
 
 
 
-async def setting_handler(bot, msg, user, setting):    
-    await msg.reply_text(text=setting.texts.setting_text, reply_markup=btn.setting_btn(user), quote=True)
 
 
 async def plans_handler(bot, msg, user, setting):
@@ -71,10 +68,18 @@ async def plans_handler(bot, msg, user, setting):
 
 
 async def profile_handler(bot, msg, user, setting):
-    print('proifle text')
-    # ads = con.setting.ads
-    # user = con.user(chat_id=msg.from_user.id, full_name=msg.from_user.first_name)
-    # if ads:
-    #     await msg.reply_text(txt.profile_text(user), quote=True, reply_markup=btn.ads_btn(ads))
-    # else:
-        # await msg.reply_text(txt.profile_text(user), quote=True)
+    ads = setting.ads
+    if ads:
+        await msg.reply_text(txt.profile_text(user , setting), quote=True, reply_markup=btn.ads_btn(ads))
+    else:
+        await msg.reply_text(txt.profile_text(user , setting), quote=True)
+
+
+
+
+
+async def setting_handler(bot, msg, user, setting):    
+
+    await msg.reply_text(text=setting.texts.setting_text, reply_markup=btn.setting_btn(user = user , setting=setting), quote=True)
+
+

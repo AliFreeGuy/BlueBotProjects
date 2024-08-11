@@ -48,7 +48,6 @@ async def user_is_active(_ , cli , msg ):
 
 async def user_not_active(_ , cli , msg ):
     user = con.user(chat_id=msg.from_user.id , full_name=msg.from_user.first_name)
-    print(user.user.is_active)
     if user.is_active == False:return True
     return False
 

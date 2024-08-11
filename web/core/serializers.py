@@ -40,6 +40,10 @@ class CompressorTextSerializer(serializers.ModelSerializer):
         model = CompressorTextModel
         fields = '__all__'
 
+class LanguagesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LanguagesModel
+        fields = ['id', 'name', 'code']  # یا هر فیلد دیگری که نیاز دارید
 
 
 class CompressorSettingSerializer(serializers.ModelSerializer):
@@ -48,6 +52,7 @@ class CompressorSettingSerializer(serializers.ModelSerializer):
     bot = BotsSerializer(read_only=True)  # Assuming a relationship between setting and bot
     plans = serializers.SerializerMethodField()  # Custom method to include plans
     texts = serializers.SerializerMethodField()  # Custom method to include texts
+    langs = serializers.SerializerMethodField()  # Custom method to include languages
 
     class Meta:
         model = CompressorSettingModel
@@ -86,6 +91,12 @@ class CompressorSettingSerializer(serializers.ModelSerializer):
             return {}
 
         return CompressorTextSerializer(texts).data
+
+    def get_langs(self, obj):
+        # Assuming `langs` is a field or related to `CompressorSettingModel`
+        language_ids = obj.langs.all()  # or obj.langs.values_list('id', flat=True) if `langs` is a ManyToManyField
+        languages = LanguagesModel.objects.filter(id__in=language_ids)
+        return LanguagesSerializer(languages, many=True).data
 
 
 class UserSerializer(serializers.ModelSerializer):
