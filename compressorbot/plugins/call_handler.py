@@ -2,7 +2,10 @@ from pyrogram import Client, filters
 from utils import logger , cache , btn , txt
 from utils.connection import con
 from utils import filters as f
+from utils.tasks import app 
+from flower.utils.broker import Broker
 import time
+from utils.tasks import editor
 from utils.utils import join_checker , deleter , alert , file_checker
 from celery.result import AsyncResult
 import subprocess
@@ -28,6 +31,10 @@ async def callback_manager(bot, call):
         await joined_handler(bot , call , user , setting  )
     
 
+    elif status.startswith('editor_'):
+        await set_editor_quality(bot ,call  , user , setting )
+
+
     
     elif status == 'setting':
         await setting_handler(bot , call , user , setting  )
@@ -38,20 +45,20 @@ async def callback_manager(bot, call):
     elif status == 'back_plans' :
         await back_to_plans(bot , call, user , setting  )
     
-#     elif status == 'status-editor' :
-#         await status_editor(bot , call )
+    elif status == 'status-editor' :
+        await status_editor(bot , call )
     
-#     elif status == 'cancel-editor' : 
-#         await cancel_editor(bot , call )
+    elif status == 'cancel-editor' : 
+        await cancel_editor(bot , call )
 
 #     elif status.startswith('editor_'):
 #         await set_editor_quality(bot ,call  )
 
-#     elif status == 'block_user' :
-#         await block_user(bot , call )
+    elif status == 'block_user' :
+        await block_user(bot , call )
     
-#     elif status == 'unblock_user' :
-#         await unblock_user(bot , call )
+    elif status == 'unblock_user' :
+        await unblock_user(bot , call )
     
 
 
@@ -59,68 +66,74 @@ async def callback_manager(bot, call):
 
 
 
-# async def block_user(bot , call ):
-#     user_data=int(call.data.split(':')[1])
-#     user = con.user(chat_id=user_data , full_name='blocked' , is_active=False)
-#     await bot.edit_message_text(chat_id = call.message.chat.id , message_id = call.message.id , text = call.message.caption , reply_markup = btn.unblock_user(call.from_user.id))
+async def block_user(bot , call ):
+    user_data=int(call.data.split(':')[1])
+    user = con.user(chat_id=user_data  , is_active=False)
+    await bot.edit_message_text(chat_id = call.message.chat.id , message_id = call.message.id , text = call.message.caption , reply_markup = btn.unblock_user(call.from_user.id))
 
 
-# async def unblock_user(bot , call ):
-#     user_data=int(call.data.split(':')[1])
-#     user = con.user(chat_id=user_data , full_name='blocked' , is_active=True)
-#     await bot.edit_message_text(chat_id = call.message.chat.id , message_id = call.message.id , text = call.message.caption , reply_markup = btn.block_user_btn(call.from_user.id))
+async def unblock_user(bot , call ):
+    user_data=int(call.data.split(':')[1])
+    user = con.user(chat_id=user_data  , is_active=True)
+    await bot.edit_message_text(chat_id = call.message.chat.id , message_id = call.message.id , text = call.message.caption , reply_markup = btn.block_user_btn(call.from_user.id))
 
 
 
-# async def set_editor_quality(bot , call ):
-#     user = con.user(call.from_user.id , call.from_user.first_name )
-#     setting = con.setting
-#     vid_key = f'vid_data:{call.data.split(":")[2]}'
-#     vid_data = cache.redis.hgetall(vid_key)
-#     video_quality = call.data.split(':')[0].replace('editor_' , '')
-#     if vid_data :
-
-#         file_checker_data = file_checker(unique_id = vid_data['unique_id'] , quality =video_quality)
-#         if file_checker_data :
-#             await bot.delete_messages(call.from_user.id, call.message.id)
-#             await bot.send_video(call.from_user.id , video = file_checker_data['file_id'])
+async def set_editor_quality(bot, call, user, setting):
+    vid_key = f'vid_data:{call.data.split(":")[2]}'
+    vid_data = cache.redis.hgetall(vid_key)
+    video_quality = call.data.split(':')[0].replace('editor_', '')
+    
+    if vid_data:
+        file_checker_data = file_checker(unique_id=vid_data['unique_id'], quality=video_quality)
+        
+        if file_checker_data:
+            await bot.delete_messages(call.from_user.id, call.message.id)
+            await bot.send_video(call.from_user.id, video=file_checker_data['file_id'])
+        else:
+            # Update quality and other properties
+            cache.redis.hset(vid_key, 'quality', f"quality_{video_quality}")
+            data = cache.redis.hgetall(vid_key)
             
-#         else :
+            # Convert string fields to appropriate types
+            data['quality'] = f'quality_{video_quality}'
+            data['task_id'] = 'none'
+            data['width'] = int(data.get('width', '0'))
+            data['height'] = int(data.get('height', '0'))
+            data['duration'] = float(data.get('duration', '0.0'))
 
-#             cache.redis.hset(vid_key , 'quality'  , call.data.split(':')[0].replace('editor_' , ''))
-#             data = cache.redis.hgetall(vid_key)
-#             data['quality'] = video_quality
-#             data = cache.redis.hgetall(vid_key)
-#             data['task_id'] = 'none'
-#             task = editor.delay(data)
-#             data['task_id'] = task.id
-
+            cache.redis.hmset(vid_key , data)
             
-#             try :
-#                     vid_editor_text = 'hi user '
-#                     await bot.edit_message_text(chat_id = call.from_user.id ,
-#                                                 text = vid_editor_text ,
-#                                                 message_id  = call.message.id,
-#                                                 reply_markup = btn.vid_editor_btn(vid_data =vid_key ))
-#             except Exception as e :
-#                 logger.warning(e)
+            task = editor.delay(data)
+            data['task_id'] = task.id
+
+            try:
+                vid_editor_text = setting.texts.editor_progress_text
+                await bot.edit_message_text(
+                    chat_id=call.from_user.id,
+                    text=vid_editor_text,
+                    message_id=call.message.id,
+                    reply_markup=btn.vid_editor_btn(vid_data=vid_key , setting = setting)
+                )
+            except Exception as e:
+                logger.warning(e)
 
 
 
 
 
 
-# async def status_editor(bot , call ):
-#     broker = Broker(
-#         app.connection(connect_timeout=1.0).as_uri(include_password=True),
-#         broker_options=app.conf.broker_transport_options,
-#         broker_use_ssl=app.conf.broker_use_ssl,
-#     )
-#     async def queue_length():
-#         queues = await broker.queues(["celery"])
-#         print(queues)
-#         return queues[0].get("messages")
-#     await alert(bot , call , msg =txt.task_status(task_count=await queue_length()))
+async def status_editor(bot , call ):
+    broker = Broker(
+        app.connection(connect_timeout=1.0).as_uri(include_password=True),
+        broker_options=app.conf.broker_transport_options,
+        broker_use_ssl=app.conf.broker_use_ssl,
+    )
+    async def queue_length():
+        queues = await broker.queues(["celery"])
+        print(queues)
+        return queues[0].get("messages")
+    await alert(bot , call , msg =txt.task_status(task_count=await queue_length()))
     
     
 
@@ -130,19 +143,19 @@ async def callback_manager(bot, call):
 
 
 
-# async def cancel_editor(bot , call ):
-#     try :
-#         user = con.user(chat_id=call.from_user.id , full_name=call.from_user.first_name)
-#         vid_data = cache.redis.hgetall(call.data.replace('cancel-editor:' , ''))
-#         task_id = vid_data['task_id']
-#         task = AsyncResult(task_id)
-#         task.revoke(terminate=True)
-#         user_file_size= int(float(vid_data['file_size']))
-#         con.user(chat_id=call.from_user.id , full_name=call.from_user.first_name , volume= user.volume + user_file_size)
-#         await alert(bot  ,call , msg= 'عملیات با موفقیت کنسل شد')
-#         await bot.delete_messages(call.from_user.id , call.message.id)
-#     except Exception as e :
-#         logger.error(e)
+async def cancel_editor(bot , call ):
+    try :
+        user = con.user(chat_id=call.from_user.id , full_name=call.from_user.first_name)
+        vid_data = cache.redis.hgetall(call.data.replace('cancel-editor:' , ''))
+        task_id = vid_data['task_id']
+        task = AsyncResult(task_id)
+        task.revoke(terminate=True)
+        user_file_size= int(float(vid_data['file_size']))
+        con.user(chat_id=call.from_user.id , full_name=call.from_user.first_name , volume= user.volume + user_file_size)
+        await alert(bot  ,call , msg= 'عملیات با موفقیت کنسل شد')
+        await bot.delete_messages(call.from_user.id , call.message.id)
+    except Exception as e :
+        logger.error(e)
 
 
 

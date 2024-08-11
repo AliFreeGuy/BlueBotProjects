@@ -76,6 +76,54 @@ def ads_btn(ads):
 
 
 
+def block_user_btn(chat_id):
+    buttons = [[InlineKeyboardButton(text='بلاک کاربر',callback_data=f'block_user:{chat_id}')]]
+    return InlineKeyboardMarkup(buttons)
+
+def unblock_user(chat_id):
+    buttons = [[InlineKeyboardButton(text='آنبلاک کاربر',callback_data=f'unblock_user:{chat_id}')]]
+    return InlineKeyboardMarkup(buttons)
+
+
+
+def vid_editor_quality( vid_key ):
+
+    buttons = []
+    q1= 'کیفیت خوب'
+    q2='کیفیت متوسط'
+    q3= 'کیفیت کم'
+    quality_btn = [
+        InlineKeyboardButton(text=q1,callback_data=f'editor_1:{vid_key}'),
+        InlineKeyboardButton(text=q2,callback_data=f'editor_2:{vid_key}'),
+        InlineKeyboardButton(text=q3,callback_data=f'editor_3:{vid_key}'),
+        ] 
+    buttons.append(quality_btn)
+    
+
+    return InlineKeyboardMarkup(buttons)
+
+
+def vid_editor_btn(vid_data , setting):
+    
+    buttons = []
+    buttons.append([
+        InlineKeyboardButton(text='❌ کنسل',callback_data=f'cancel-editor:{vid_data}'),
+        InlineKeyboardButton(text='♻️ وضعیت',callback_data=f'status-editor:{vid_data}') ,
+                    ])
+    
+    for ad in setting.ads :
+        buttons.append(
+        [InlineKeyboardButton(text=ad.name,url=ad.url),]
+
+        )
+    return InlineKeyboardMarkup(buttons)
+
+
+
+
+
+
+
 def setting_btn(user, setting):
     user_lang = user.lang
     user_quality = user.quality

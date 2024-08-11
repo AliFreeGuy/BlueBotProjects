@@ -16,6 +16,40 @@ def m_to_g(data):
     except Exception as e : print('m to g utils  ' , str(e))
 
 
+def b_to_mb(data):
+    file_size_in_megabytes = data / (1024 * 1024)
+    file_size = (f"{file_size_in_megabytes:.2f}")
+    return float(file_size)
+
+
+def convert_data_types(data):
+    # تبدیل مقادیر رشته‌ای به نوع‌های صحیح و اعشاری
+    converted_data = {
+        'task_id': data.get('task_id', 'none'),
+        'caption': data.get('caption', 'none'),
+        'backup_msg_id': data.get('backup_msg_id', 'none'),
+        'unique_id': data.get('unique_id', 'none'),
+        'chat_id': data.get('chat_id', 'none'),
+        'height': int(data.get('height', '0')),  # تبدیل به عدد صحیح
+        'id': data.get('id', 'none'),
+        'width': int(data.get('width', '0')),  # تبدیل به عدد صحیح
+        'thumb': data.get('thumb', 'none'),
+        'file_size': float(data.get('file_size', '0.0')),  # تبدیل به عدد اعشاری
+        'duration': float(data.get('duration', '0.0')),  # تبدیل به عدد اعشاری
+        'bot_msg_id': data.get('bot_msg_id', 'none'),
+        'quality': data.get('quality', 'none')
+    }
+    
+    return converted_data
+def file_checker(unique_id , quality):
+    vids_data = [cache.redis.hgetall(i) for i in cache.redis.keys(f'vid_data:*')]
+    vid_data = None 
+    for vid in vids_data :
+        if vid.get('unique_id') == unique_id and vid.get('quality') == quality and vid.get('file_id') :
+            vid_data = vid
+    return vid_data
+
+
 
 
 def jdate(date_miladi):

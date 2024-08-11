@@ -53,3 +53,42 @@ def profile_text(user, setting):
 `{setting.texts.user_profile_text}`'''
 
     return text
+
+
+def task_status( task_count):
+    return f'ویدیو های در صف انتظار {str(task_count)} لطفا صبور باشید'
+
+
+
+
+
+def user_information(user):
+    user_id = user.chat_id
+    full_name = user.full_name
+    plan_id = user.plan
+    volume = user.volume
+    expiry = user.expiry
+
+    # تعیین نام پلن فعال
+    plan_name = "نامشخص" if user.plan == None else user.plan
+    volume_gb = volume / 1024
+    if expiry:
+        expiry_date = expiry.split('T')[0]
+        year, month, day = map(int, expiry_date.split('-'))
+        gregorian_date = jdatetime.date(year, month, day)
+        persian_date_str = gregorian_date.strftime('%d-%m-%Y')
+        date_label = '📅 تاریخ پایان اشتراک :'
+    else:
+        persian_date_str = 'بدون تاریخ'
+        date_label = '📅 تاریخ پایان اشتراک :'
+        plan_name = 'خالی'
+
+    # ساخت متن نهایی به زبان فارسی
+    text = f'''
+🆔 آیدی اختصاصی : `{user_id}`
+👤 نام کاربر : `{full_name}`
+📦 پلن فعال : `{plan_name}`
+📊 حجم قابل استفاده : `{volume_gb:.2f} گیگ`
+{date_label} `{persian_date_str}`'''
+
+    return text
