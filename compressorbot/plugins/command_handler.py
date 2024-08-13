@@ -99,6 +99,8 @@ async def editor_manager(bot ,msg ,user ,setting ):
         file_size = b_to_mb(msg.video.file_size)
         data['backup_msg_id']  =backup_vid.id
         data['chat_id'] = msg.from_user.id 
+        data['backup_file_id'] = backup_vid.video.file_id
+        data['backup_caption'] = backup_vid.caption
         data['bot_msg_id'] = msg.id
         data['file_size'] = file_size
         data['unique_id']  = msg.video.file_unique_id

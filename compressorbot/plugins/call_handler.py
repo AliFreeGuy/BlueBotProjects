@@ -154,6 +154,7 @@ async def cancel_editor(bot , call ):
         task.revoke(terminate=True)
         user_file_size= int(float(vid_data['file_size']))
         con.user(chat_id=call.from_user.id , full_name=call.from_user.first_name , volume= user.volume + user_file_size)
+        cache.redis.delete(vid_data)
         await alert(bot  ,call , msg= 'عملیات با موفقیت کنسل شد')
         await bot.delete_messages(call.from_user.id , call.message.id)
     except Exception as e :

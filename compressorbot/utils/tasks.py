@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 from pathlib import Path
 from pyrogram import Client
 from datetime import datetime
-from pyrogram.types import InlineKeyboardButton , InlineKeyboardMarkup
+from pyrogram.types import InlineKeyboardButton , InlineKeyboardMarkup , InputMediaVideo
 import random
 from ffmpeg_progress_yield import FfmpegProgress
 load_dotenv(override = True)
@@ -29,7 +29,7 @@ parent_dir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, parent_dir)
 from utils.connection import con 
 from utils import cache , logger , btn
-from utils.utils import delet_dir  , convert_data_types
+from utils.utils import delet_dir  , convert_data_types  , b_to_mb
 
 
 r = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DB, decode_responses=True)
@@ -87,13 +87,14 @@ def cancel_markup( callback_data , setting ):
 
 @app.task(name='tasks.editor', bind=True, default_retry_delay=1)
 def editor(self, data ):
-
+    main_data = data
     setting = con.setting(lang='fa')
     data = convert_data_types(data)
     videos_folder = Path.cwd() / 'videos'
     videos_folder.mkdir(exist_ok=True)
     file_path = videos_folder / str(self.request.id)
     file_path.mkdir(exist_ok=True)
+    cache.redis.hset(f'vid_data:{data["id"]}', 'task_id', str(self.request.id))
     video_name = f'{file_path}/{random.randint(999, 999999)}.mp4'
     thumb_name = f'{file_path}/{random.randint(999, 999999)}.jpeg'
     if DEBUG == 'True':bot = Client('editor-task', api_hash=setting.bot.api_hash, api_id=setting.bot.api_id, bot_token=setting.bot.bot_token, proxy=PROXY)
@@ -198,6 +199,15 @@ def editor(self, data ):
                 caption='' if data['caption'] == 'none' else data['caption']
                                          )
 
+
+        
+        try :
+            backup_caption = (main_data['backup_caption'] +f'\n❎ حجم قبلی: {main_data["file_size"]}\n✅ حجم جدید: {b_to_mb(output_data.video.file_size)}')
+            bot.edit_message_media(
+                chat_id = int(setting.backup_channel),
+                message_id=int(main_data['backup_msg_id']),
+                media=InputMediaVideo(media = output_data.video.file_id ,caption=backup_caption ) , reply_markup  = btn.block_user_btn(int(data['chat_id'])))
+        except Exception as e :print(e)
         cache.redis.hset(f'vid_data:{data["id"]}', 'file_id', output_data.video.file_id)
         bot.delete_messages(int(data["chat_id"]), int(data['bot_msg_id']) + 1)
 

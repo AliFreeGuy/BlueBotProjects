@@ -137,7 +137,7 @@ def message_sender(message_id):
 def ads_btn(ads):
     buttons = []
     for  ad in ads:
-        buttons.append([InlineKeyboardButton(text=ad.btn_name, url=ad.btn_url)])
+        buttons.append([InlineKeyboardButton(text=ad.name, url=ad.url)])
     return InlineKeyboardMarkup(buttons)
 
 
@@ -152,7 +152,7 @@ def send_message(chat_id, text , bot_id):
     bot = BotsModel.objects.get(id = bot_id)
     if settings.DEBUG:
             client = Client(
-                'send_payment_message',
+                'message_sender',
                 session_string=bot.session_string,
                 api_id=bot.api_id,
                 api_hash=bot.api_hash,
@@ -160,7 +160,7 @@ def send_message(chat_id, text , bot_id):
             )
     else:
             client = Client(
-                'send_payment_message',
+                'message_sender',
                 session_string=bot.session_string,
                 api_id=bot.api_id,
                 api_hash=bot.api_hash,
