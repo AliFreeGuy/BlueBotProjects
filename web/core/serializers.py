@@ -49,10 +49,11 @@ class LanguagesSerializer(serializers.ModelSerializer):
 class CompressorSettingSerializer(serializers.ModelSerializer):
     channels = ChannelsSerializer(many=True, read_only=True)
     ads = AdsSerializer(many=True, read_only=True)
-    bot = BotsSerializer(read_only=True)  # Assuming a relationship between setting and bot
-    plans = serializers.SerializerMethodField()  # Custom method to include plans
-    texts = serializers.SerializerMethodField()  # Custom method to include texts
-    langs = serializers.SerializerMethodField()  # Custom method to include languages
+    bot = BotsSerializer(read_only=True)
+    plans = serializers.SerializerMethodField()
+    texts = serializers.SerializerMethodField()
+    langs = serializers.SerializerMethodField()
+    admin = serializers.SerializerMethodField()  # Field for admin users
 
     class Meta:
         model = CompressorSettingModel
@@ -63,10 +64,8 @@ class CompressorSettingSerializer(serializers.ModelSerializer):
         return CompressorPlansSerializer(plans, many=True).data
 
     def get_texts(self, obj):
-        # Get the language code from context (if available)
         lang_code = self.context.get('lang_code')
 
-        # Try to get the language object
         if lang_code:
             try:
                 lang = LanguagesModel.objects.get(code=lang_code)
@@ -75,28 +74,30 @@ class CompressorSettingSerializer(serializers.ModelSerializer):
         else:
             lang = None
         
-        # Attempt to get the texts for the given bot and language
         if lang:
             try:
                 texts = CompressorTextModel.objects.get(bot=obj.bot, lang=lang)
             except CompressorTextModel.DoesNotExist:
-                # If texts for the specific lang do not exist, get the first available text
                 texts = CompressorTextModel.objects.filter(bot=obj.bot).first()
         else:
-            # If no lang is provided, get the first available text
             texts = CompressorTextModel.objects.filter(bot=obj.bot).first()
 
-        # If no texts are found, return an empty dictionary
         if not texts:
             return {}
 
         return CompressorTextSerializer(texts).data
 
     def get_langs(self, obj):
-        # Assuming `langs` is a field or related to `CompressorSettingModel`
-        language_ids = obj.langs.all()  # or obj.langs.values_list('id', flat=True) if `langs` is a ManyToManyField
+        language_ids = obj.langs.all()
         languages = LanguagesModel.objects.filter(id__in=language_ids)
         return LanguagesSerializer(languages, many=True).data
+
+    def get_admin(self, obj):
+        # Get all users who are admin
+        admin_users = User.objects.filter(is_admin=True)
+        return UserSerializer(admin_users, many=True).data
+
+
 
 
 class UserSerializer(serializers.ModelSerializer):

@@ -45,7 +45,6 @@ class CompressorPlansModel(models.Model):
 
 
 
-
 class CompressorUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='compressor')
     plan = models.ForeignKey(CompressorPlansModel, related_name='users', on_delete=models.SET_NULL, null=True, blank=True)
@@ -64,27 +63,22 @@ class CompressorUser(models.Model):
 
     def save(self, *args, **kwargs):
         if self.pk:
-            # Fetch the existing instance if it exists
             existing_instance = CompressorUser.objects.get(pk=self.pk)
 
             if existing_instance.plan != self.plan:
-                # If plan has changed, update volume and expiry
                 if self.plan:
                     self.volume = self.plan.volume
                     self.expiry = timezone.now() + timezone.timedelta(days=self.plan.day)
                 else:
-                    # If plan is removed, clear volume and expiry
                     self.volume = 0
                     self.expiry = None
 
-            # Check if the current subscription is expired
             if self.expiry and self.expiry < timezone.now():
                 self.plan = None
                 self.volume = 0
                 self.expiry = None
                 self.is_active = False
         else:
-            # If this is a new instance and no plan is assigned, assign the free plan
             if not self.plan:
                 try:
                     free_plan = CompressorPlansModel.objects.get(tag='free')
@@ -95,7 +89,6 @@ class CompressorUser(models.Model):
                 except CompressorPlansModel.DoesNotExist:
                     pass
 
-            # Assign the compressor bot if not already assigned
             if not self.bot:
                 try:
                     compressor_bot = BotsModel.objects.get(type='compressor')
@@ -103,13 +96,19 @@ class CompressorUser(models.Model):
                 except BotsModel.DoesNotExist:
                     pass
 
-        # Ensure volume and expiry are reset if no plan is assigned
+        # Check if lang is not set, assign 'fa' language
+        if not self.lang:
+            try:
+                fa_lang = LanguagesModel.objects.get(code='fa')
+                self.lang = fa_lang
+            except LanguagesModel.DoesNotExist:
+                pass
+
         if not self.plan:
             self.volume = 0
             self.expiry = None
             self.is_active = False
 
-            # Assign the free plan if it exists
             try:
                 free_plan = CompressorPlansModel.objects.get(tag='free')
                 self.plan = free_plan
@@ -119,11 +118,9 @@ class CompressorUser(models.Model):
             except CompressorPlansModel.DoesNotExist:
                 pass
 
-        # Set quality to 'quality_0' if not provided
         if not self.quality:
             self.quality = 'quality_0'
 
-        # Save the instance
         super().save(*args, **kwargs)
 
 

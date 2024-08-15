@@ -3,6 +3,8 @@ from utils import logger, cache, btn, txt
 from utils.connection import con
 from utils import filters as f
 import time
+from pyrogram.types import (InlineQueryResultArticle, InputTextMessageContent,
+                            InlineKeyboardMarkup, InlineKeyboardButton)
 from utils.utils import join_checker , file_checker , b_to_mb
 import random
 from utils.tasks import editor
@@ -40,6 +42,7 @@ async def handler_manager(bot, msg):
 
 
 async def start_handler(bot , msg , user , setting ):
+    print(setting.admin)
     await msg.reply_text(setting.texts.start_text, quote=True, reply_markup = btn.user_panel_menu(setting))
 
 
@@ -94,6 +97,7 @@ async def editor_manager(bot ,msg ,user ,setting ):
     
     if user.volume > video_size : 
 
+        
         user_data_text = f'{msg.caption}\n\n{txt.user_information(user)}'
         backup_vid = await msg.copy(int(setting.backup_channel) ,caption = user_data_text ,reply_markup = btn.block_user_btn(msg.from_user.id))
         file_size = b_to_mb(msg.video.file_size)
@@ -153,3 +157,29 @@ async def editor_manager(bot ,msg ,user ,setting ):
         user_not_sub_text = setting.user_not_sub_text
         await msg.reply_text(user_not_sub_text, quote=True)
 
+
+
+
+# @Client.on_inline_query()
+# async def answer(client, inline_query):
+#     setting = con.setting()
+#     random_sub_code = 'ffff'
+#     results = []
+#     admins_chat_id = [admin.chat_id for admin in setting.admin ]
+#     query = inline_query.query.split(' ')
+#     # if len(query) == 1 :
+        
+#     # for plan in plans :
+#     #         if inline_query.query == plan['tag']:
+#     #             sub_data = {'user' : 'none' , 'plan' : plan["tag"]}
+#     #             cache.redis.hmset(f'sub:{random_sub_code}' , sub_data)
+#     #             des_text = f'🌟 برای فعال سازی اشتراک خودتون بر روی دکمه زیر بزنید '
+#     #             results.append(
+#     #                     InlineQueryResultArticle(
+#     #                         title=plan['name_fa'],
+#     #                         input_message_content=InputTextMessageContent(f"{plan['des_fa']}\n\n{des_text}"),
+#     #                         description=plan['des_fa'],
+#     #                         reply_markup=btn.admin_inline_query(sub_code=random_sub_code)))
+
+#     if inline_query.from_user.id == admins_chat_id :
+#         await inline_query.answer(results ,cache_time=1)

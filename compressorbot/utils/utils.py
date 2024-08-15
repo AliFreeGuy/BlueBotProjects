@@ -7,6 +7,12 @@ from utils.connection import con
 
 
 
+
+
+# def gif_code():
+#     return f'gift_{uuid.uuid4}'
+
+
 def m_to_g(data):
     try :
         number = data
