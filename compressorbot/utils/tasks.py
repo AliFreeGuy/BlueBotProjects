@@ -123,19 +123,46 @@ def editor(self, data ):
     quality =data['quality']
     crf_value = getattr(setting, quality, 30)  # پیش‌فرض به 30 تنظیم شده است
 
+    watermark = setting.watermark_text
+    watermark_color = setting.watermark_color
+    watermark_size = setting.watermark_size
+
+
+    watermark = setting.watermark_text
+    watermark_color = setting.watermark_color
+    watermark_size = setting.watermark_size
+    watermark_position = setting.watermark_position
+
+
     cmd = [
-        "ffmpeg", "-i", video_name,
-        "-r", "15",
-        "-c:v", "libx265", 
-        "-crf", str(crf_value),
-        "-preset", "medium",
-        "-c:a", "aac",
-        "-b:a", "64k",
-        "-map_metadata", "0",
-        "-movflags", "+faststart",
-        f'{file_path}/output.mp4'
-    ]
-    print(cmd)
+    "ffmpeg", "-i", video_name,
+    "-r", "15",
+    "-c:v", "libx265", 
+    "-crf", str(crf_value),
+    "-preset", "medium",
+    "-c:a", "aac",
+    "-b:a", "64k",
+    "-map_metadata", "0",
+    "-movflags", "+faststart",
+]
+
+    # بررسی وجود واترمارک و تنظیم موقعیت آن
+    if watermark:
+        position_mapping = {
+            'top_left': "x=10:y=10",
+            'top_right': "x=w-tw-10:y=10",
+            'bottom_left': "x=10:y=h-th-10",
+            'bottom_right': "x=w-tw-10:y=h-th-10",
+            'center': "x=(w-tw)/2:y=(h-th)/2"
+        }
+
+    position = position_mapping.get(watermark_position, "x=w-tw-10:y=h-th-10")
+    
+    cmd.extend([
+        "-vf", f"drawtext=text='{watermark}':fontcolor={watermark_color}@1.0:fontsize={watermark_size}:{position}"
+    ])
+
+    cmd.append(f'{file_path}/output.mp4')
     # # Process the video with ffmpeg and track progress
     with bot :
         ff = FfmpegProgress(cmd)

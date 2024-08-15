@@ -17,10 +17,25 @@ class CompressorSettingModel(BaseBotSettingModel):
     quality_1 =  models.IntegerField(default=1)
     quality_2 =  models.IntegerField(default=1)
     quality_3 = models.IntegerField(default=1)
-    watermark_text = models.TextField(null=True , blank=True)
+    watermark_text = models.CharField(null=True , blank=True , max_length=128)
     watermark_color = models.CharField(max_length=128 , null=True , blank=True )
-    water_mark_size = models.PositiveIntegerField(null=True , blank=True)
+    watermark_size = models.PositiveIntegerField(null=True , blank=True)
 
+
+
+    WATERMARK_POSITIONS = [
+        ('top_left', 'گوشه بالا سمت چپ'),
+        ('top_right', 'گوشه بالا سمت راست'),
+        ('bottom_left', 'گوشه پایین سمت چپ'),
+        ('bottom_right', 'گوشه پایین سمت راست'),
+        ('center', 'مرکز'),
+    ]
+    watermark_position = models.CharField(
+        max_length=20,
+        choices=WATERMARK_POSITIONS,
+        default='bottom_right',
+        verbose_name="موقعیت واترمارک"
+    )
     class Meta:
         verbose_name = "Setting"
         verbose_name_plural = "Settings"
