@@ -12,10 +12,14 @@ from django.utils.translation import gettext_lazy as _
 
 class CompressorSettingModel(BaseBotSettingModel):
     max_limit_video = models.PositiveBigIntegerField()
-
+    max_limit_free_video = models.PositiveBigIntegerField(default=100)
+    max_limit_text = models.TextField(default='متن حجم مجاز')
     quality_1 =  models.IntegerField(default=1)
     quality_2 =  models.IntegerField(default=1)
     quality_3 = models.IntegerField(default=1)
+    watermark_text = models.TextField(null=True , blank=True)
+    watermark_color = models.CharField(max_length=128 , null=True , blank=True )
+    water_mark_size = models.PositiveIntegerField(null=True , blank=True)
 
     class Meta:
         verbose_name = "Setting"

@@ -105,9 +105,16 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['chat_id', 'full_name', 'wallet', 'phone', 'is_admin', 'is_active', 'creation']
 
+
+
+
+
+
+
+
 class CompressorUserSerializer(serializers.ModelSerializer):
     user = UserSerializer()  # Nested serializer for user information
-    plan = serializers.PrimaryKeyRelatedField(queryset=CompressorPlansModel.objects.all(), required=False)
+    plan = CompressorPlansSerializer()  # Nested serializer for plan details
     lang = serializers.SlugRelatedField(queryset=LanguagesModel.objects.all(), slug_field='code', required=False)  # Use code instead of id
     quality = serializers.ChoiceField(choices=[('quality_0', 'Quality 0'), ('quality_1', 'Quality 1'), ('quality_2', 'Quality 2'), ('quality_3', 'Quality 3')], required=False, allow_null=True)
 
@@ -117,6 +124,7 @@ class CompressorUserSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         user_data = validated_data.pop('user', {})
+        plan_data = validated_data.pop('plan', None)
         user = instance.user
 
         # Update user fields
@@ -124,6 +132,11 @@ class CompressorUserSerializer(serializers.ModelSerializer):
             if hasattr(user, attr):
                 setattr(user, attr, value)
         user.save()
+
+        # Update plan if provided
+        if plan_data:
+            plan = CompressorPlansModel.objects.get(pk=plan_data['id'])
+            instance.plan = plan
 
         # Update CompressorUser fields
         for attr, value in validated_data.items():

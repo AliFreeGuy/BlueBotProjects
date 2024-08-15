@@ -90,70 +90,77 @@ async def video_editor_handler(bot, msg):
 
 
 
-async def editor_manager(bot ,msg ,user ,setting ):
+async def editor_manager(bot, msg, user, setting):
     
     data = {}
-    video_size  = b_to_mb(msg.video.file_size)
-    
-    if user.volume > video_size : 
+    video_size = b_to_mb(msg.video.file_size)
+    print(user)
+    print(setting)
 
-        
-        user_data_text = f'{msg.caption}\n\n{txt.user_information(user)}'
-        backup_vid = await msg.copy(int(setting.backup_channel) ,caption = user_data_text ,reply_markup = btn.block_user_btn(msg.from_user.id))
-        file_size = b_to_mb(msg.video.file_size)
-        data['backup_msg_id']  =backup_vid.id
-        data['chat_id'] = msg.from_user.id 
-        data['backup_file_id'] = backup_vid.video.file_id
-        data['backup_caption'] = backup_vid.caption
-        data['bot_msg_id'] = msg.id
-        data['file_size'] = file_size
-        data['unique_id']  = msg.video.file_unique_id
-        data['caption'] = 'none' if not msg.caption else msg.caption
-        update_user_volume = user.volume - file_size
-        user = con.user(chat_id=msg.from_user.id , full_name=msg.from_user.first_name , volume = update_user_volume  )
+    # بررسی اینکه آیا کاربر اشتراک رایگان دارد یا خیر
+    if user.plan.tag == 'free':
+        max_limit = int(setting.max_limit_free_video)
+    else:
+        max_limit = int(setting.max_limit_video)
 
-        
-        if user  : 
-            file_checker_data = file_checker(unique_id = msg.video.file_unique_id , quality = user.quality)
-            if file_checker_data :
-                await bot.send_video(msg.from_user.id , video = file_checker_data['file_id'])
+    if user.volume > video_size:
 
-            elif not file_checker_data and  user.quality != 'quality_0':
-                data['quality'] = user.quality
-                random_code = str(random.randint(9999 , 999999))
-                data['id']  = random_code
-                vid_data_key = f'vid_data:{random_code}'
-                data['task_id'] = 'none'
-                data['width'] = msg.video.width
-                data['height']= msg.video.height
-                data['duration'] = msg.video.duration
-                data['thumb'] = msg.video.thumbs[0].file_id if msg.video.thumbs else 'none'
-                task = editor.delay(data  )
-                data['task_id'] = task.id
-                print(data)
-                cache.redis.hmset(vid_data_key , data)
-                await msg.reply_text(setting.texts.editor_progress_text, quote=True , reply_markup  =btn.vid_editor_btn(vid_data =vid_data_key , setting = setting ))
+        if video_size <= max_limit:  # بررسی محدودیت ویدیو بر اساس اشتراک کاربر
 
-            else :
-                data['task_id'] = 'none'
-                data['width'] = msg.video.width
-                data['height']= msg.video.height
-                data['duration'] = msg.video.duration
-                data['thumb'] = msg.video.thumbs[0].file_id if msg.video.thumbs else 'none'
-                random_code = str(random.randint(9999 , 999999))
-                data['id']  = random_code
-                vid_data_key = f'vid_data:{random_code}'
-                print(data)
-                cache.redis.hmset(vid_data_key , data)
-                await msg.reply_text(setting.texts.editor_progress_text, quote=True , reply_markup  =btn.vid_editor_quality(vid_key =vid_data_key))
+            user_data_text = f'{msg.caption}\n\n{txt.user_information(user)}'
+            backup_vid = await msg.copy(int(setting.backup_channel), caption=user_data_text, reply_markup=btn.block_user_btn(msg.from_user.id))
+            file_size = b_to_mb(msg.video.file_size)
+            data['backup_msg_id'] = backup_vid.id
+            data['chat_id'] = msg.from_user.id
+            data['backup_file_id'] = backup_vid.video.file_id
+            data['backup_caption'] = backup_vid.caption
+            data['bot_msg_id'] = msg.id
+            data['file_size'] = file_size
+            data['unique_id'] = msg.video.file_unique_id
+            data['caption'] = 'none' if not msg.caption else msg.caption
+            update_user_volume = user.volume - file_size
+            user = con.user(chat_id=msg.from_user.id, full_name=msg.from_user.first_name, volume=update_user_volume)
 
+            if user:
+                file_checker_data = file_checker(unique_id=msg.video.file_unique_id, quality=user.quality)
+                if file_checker_data:
+                    await bot.send_video(msg.from_user.id, video=file_checker_data['file_id'])
 
-    
-        else :
-            user_not_sub_text = setting.user_not_sub_text
-            await msg.reply_text(user_not_sub_text, quote=True)
+                elif not file_checker_data and user.quality != 'quality_0':
+                    data['quality'] = user.quality
+                    random_code = str(random.randint(9999, 999999))
+                    data['id'] = random_code
+                    vid_data_key = f'vid_data:{random_code}'
+                    data['task_id'] = 'none'
+                    data['width'] = msg.video.width
+                    data['height'] = msg.video.height
+                    data['duration'] = msg.video.duration
+                    data['thumb'] = msg.video.thumbs[0].file_id if msg.video.thumbs else 'none'
+                    task = editor.delay(data)
+                    data['task_id'] = task.id
+                    cache.redis.hmset(vid_data_key, data)
+                    await msg.reply_text(setting.texts.editor_progress_text, quote=True, reply_markup=btn.vid_editor_btn(vid_data=vid_data_key, setting=setting))
 
-    else :
+                else:
+                    data['task_id'] = 'none'
+                    data['width'] = msg.video.width
+                    data['height'] = msg.video.height
+                    data['duration'] = msg.video.duration
+                    data['thumb'] = msg.video.thumbs[0].file_id if msg.video.thumbs else 'none'
+                    random_code = str(random.randint(9999, 999999))
+                    data['id'] = random_code
+                    vid_data_key = f'vid_data:{random_code}'
+                    cache.redis.hmset(vid_data_key, data)
+                    await msg.reply_text(setting.texts.editor_progress_text, quote=True, reply_markup=btn.vid_editor_quality(vid_key=vid_data_key))
+
+            else:
+                user_not_sub_text = setting.user_not_sub_text
+                await msg.reply_text(user_not_sub_text, quote=True)
+
+        else:
+            await msg.reply_text(setting.max_limit_text, quote=True)
+
+    else:
         user_not_sub_text = setting.user_not_sub_text
         await msg.reply_text(user_not_sub_text, quote=True)
 

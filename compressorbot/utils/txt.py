@@ -61,6 +61,10 @@ def task_status( task_count):
 
 
 
+def volume_limit(limit) :
+    return f'حجم ویدیو بیشتر از حجم مجاز {str(limit)} مگ است برای حذف محدودیت ها بروروی افزایش حجم بزنید .' 
+
+
 
 def user_information(user):
     user_id = user.chat_id
