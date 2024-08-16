@@ -80,7 +80,8 @@ def cancel_markup( callback_data , setting ):
     btns = [[InlineKeyboardButton(text = '❌ کنسل', callback_data=callback_data),]]
     ads = setting.ads
     for ad in ads :
-        btns.append([InlineKeyboardButton(text = ad.name, url=ad.url),])
+        if ad.url.startswith('https://t.me/'):
+            btns.append([InlineKeyboardButton(text = ad.name, url=ad.url),])
     return InlineKeyboardMarkup(btns) 
 
 

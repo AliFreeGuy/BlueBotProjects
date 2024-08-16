@@ -40,7 +40,7 @@ def payment_plan_btn(url , lang ):
 
 
 def user_panel_menu(setting):
-    # دکمه‌ها را از تنظیمات دریافت کنید
+    print(setting.ads)
     setting_text = f'⚙️ {setting.texts.setting_btn}'
     help_text = f'🆘 {setting.texts.help_btn}'
     support_text = f'🧑‍✈️ {setting.texts.support_btn}'
@@ -49,9 +49,19 @@ def user_panel_menu(setting):
 
     marks = [
         [setting_text, profile_text],
-        [support_text, help_text, plans_text]
-    ]
-    return ReplyKeyboardMarkup(marks, resize_keyboard=True)
+        [plans_text],
+        [support_text, help_text,]]
+    
+    for miniapp in setting.ads :
+        try :
+            if not miniapp.url.startswith('https://t.me/'):
+                miniapp_url = WebAppInfo(url=miniapp.url)
+                marks.insert([KeyboardButton(miniapp.name , web_app=miniapp_url)])
+        except Exception as e : print(e)
+    
+    
+
+    return ReplyKeyboardMarkup(marks, resize_keyboard=True , placeholder=setting.texts.placeholder_text)
 
 
 
@@ -70,7 +80,8 @@ def join_channels_url(channels , btn_name):
 def ads_btn(ads):
     buttons = []
     for  ad in ads:
-        buttons.append([InlineKeyboardButton(text=ad.name, url=ad.url)])
+        if ad.url.startswith('https://t.me/'):
+            buttons.append([InlineKeyboardButton(text=ad.name, url=ad.url)])
     return InlineKeyboardMarkup(buttons)
 
 
