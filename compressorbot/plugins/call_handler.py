@@ -187,7 +187,7 @@ async def setting_handler(bot , call , user , setting  ):
         if user.lang != lang :
             user= con.user(chat_id = call.from_user.id , lang = lang)
             setting = con.setting(lang=user.lang)
-            await bot.send_message(chat_id = call.from_user.id ,text = setting.texts.start_text, reply_markup = btn.user_panel_menu(setting))
+            await bot.send_message(chat_id = call.from_user.id ,text = setting.texts.start_text, reply_markup = btn.user_panel_menu(setting , user ))
             await bot.edit_message_text(chat_id = call.from_user.id , text=setting.texts.setting_text, reply_markup=btn.setting_btn(user = user , setting=setting), message_id = call.message.id)
 
     elif data.startswith('quality_'):

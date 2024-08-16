@@ -13,6 +13,7 @@ BOT_USERNAME = env.get('BOT_USERNAME')
 BOT_TYPE = env.get('BOT_TYPE')
 con = Connection(api_key=API_KEY, api_url=API_URL, bot_username=BOT_USERNAME)
 setting = con.setting()
+ADMIN_PANEL = env.get('ADMIN_PANEL')
 
 
 BOT_SESSION = setting.bot.session_string

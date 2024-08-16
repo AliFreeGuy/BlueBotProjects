@@ -39,8 +39,7 @@ def payment_plan_btn(url , lang ):
 
 
 
-def user_panel_menu(setting):
-    print(setting.ads)
+def user_panel_menu(setting , user ):
     setting_text = f'⚙️ {setting.texts.setting_btn}'
     help_text = f'🆘 {setting.texts.help_btn}'
     support_text = f'🧑‍✈️ {setting.texts.support_btn}'
@@ -50,18 +49,20 @@ def user_panel_menu(setting):
     marks = [
         [setting_text, profile_text],
         [plans_text],
-        [support_text, help_text,]]
+        [support_text, help_text],]
     
-    for miniapp in setting.ads :
-        try :
-            if not miniapp.url.startswith('https://t.me/'):
-                miniapp_url = WebAppInfo(url=miniapp.url)
-                marks.insert([KeyboardButton(miniapp.name , web_app=miniapp_url)])
-        except Exception as e : print(e)
-    
-    
+    for miniapp in setting.ads:
+        if not miniapp.url.startswith('https://t.me/'):
+            miniapp_url = WebAppInfo(url=miniapp.url)
+            marks.insert(0, [KeyboardButton(miniapp.name, web_app=miniapp_url)])
+        
 
-    return ReplyKeyboardMarkup(marks, resize_keyboard=True , placeholder=setting.texts.placeholder_text)
+    if user.chat_id in [admin.chat_id for admin in setting.admin]:
+        miniapp_url = WebAppInfo(url=config.ADMIN_PANEL)
+        marks.append([KeyboardButton('ورود به ادمین پنل', web_app=miniapp_url)])
+
+
+    return ReplyKeyboardMarkup(marks, resize_keyboard=True, placeholder=setting.texts.placeholder_text)
 
 
 

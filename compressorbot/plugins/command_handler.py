@@ -43,7 +43,7 @@ async def handler_manager(bot, msg):
 
 async def start_handler(bot , msg , user , setting ):
     print(setting.admin)
-    await msg.reply_text(setting.texts.start_text, quote=True, reply_markup = btn.user_panel_menu(setting))
+    await msg.reply_text(setting.texts.start_text, quote=True, reply_markup = btn.user_panel_menu(setting , user))
 
 
 async def privacy_handler(bot, msg, user, setting):
@@ -61,6 +61,8 @@ async def support_handler(bot, msg, user, setting):
 async def plans_handler(bot, msg, user, setting):
     plans = setting.plans
     await msg.reply_text(text=setting.texts.plans_text, quote=True , reply_markup = btn.plans_btn(plans , setting , user ))
+
+
 
 async def profile_handler(bot, msg, user, setting):
     ads = setting.ads

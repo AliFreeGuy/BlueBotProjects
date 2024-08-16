@@ -36,7 +36,7 @@ def profile_text(user, setting):
         text = f'''
 🆔 آیدی اختصاصی : `{user_id}`
 👤 نام کاربر : `{full_name}`
-📦 پلن فعال : `{plan_name}`
+📦 پلن فعال : `{user.plan.name_en if expiry else 'خالی'}`
 📊 حجم قابل استفاده : `{volume_gb:.2f} گیگ`
 {date_label} `{persian_date_str}`
 
@@ -46,7 +46,7 @@ def profile_text(user, setting):
         text = f'''
 🆔 User ID: `{user_id}`
 👤 Full Name: `{full_name}`
-📦 Active Plan: `{plan_name if expiry else 'No Active Plan'}`
+📦 Active Plan: `{user.plan.name_en if expiry else 'No Active Plan'}`
 📊 Available Volume: `{volume_gb:.2f} GB`
 {date_label} `{persian_date_str}`
 
@@ -87,11 +87,10 @@ def user_information(user):
         date_label = '📅 تاریخ پایان اشتراک :'
         plan_name = 'خالی'
 
-    # ساخت متن نهایی به زبان فارسی
     text = f'''
 🆔 آیدی اختصاصی : `{user_id}`
 👤 نام کاربر : `{full_name}`
-📦 پلن فعال : `{plan_name}`
+📦 پلن فعال : `{user.plan.name}`
 📊 حجم قابل استفاده : `{volume_gb:.2f} گیگ`
 {date_label} `{persian_date_str}`'''
 

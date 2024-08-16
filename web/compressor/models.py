@@ -34,7 +34,7 @@ class CompressorSettingModel(BaseBotSettingModel):
         max_length=20,
         choices=WATERMARK_POSITIONS,
         default='bottom_right',
-        verbose_name="موقعیت واترمارک"
+        verbose_name="watermark positions"
     )
     class Meta:
         verbose_name = "Setting"
