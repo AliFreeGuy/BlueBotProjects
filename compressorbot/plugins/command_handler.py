@@ -265,40 +265,22 @@ async def join_listener(client, message):
 
 async def user_joined(client, message, setting, user):
     join_key = f'join_ref:{message.from_user.id}:{message.chat.id}'
-    
     if not cache.redis.get(join_key):
-        # افزایش حجم کاربر
         new_volume = user.volume + setting.join_volume
         user = con.user(chat_id=message.from_user.id, volume=new_volume)
-        
-        # ثبت کلید در Redis برای اطمینان از اینکه هدیه فقط یک بار داده می‌شود
         cache.redis.set(join_key, 'joined')
-        
-        # ارسال پیام به کاربر
         text = setting.texts.user_join_text
         text = text.replace('user', user.full_name)
         text = text.replace('volume', str(setting.join_volume))
-        
         await client.send_message(chat_id=message.from_user.id, text=text)
 
 
 async def user_leaved(client, message, setting, user):
     leave_key = f'leave_ref:{message.from_user.id}:{message.chat.id}'
-    
     if not cache.redis.get(leave_key):
-        # بررسی حجم کاربر و کاهش آن
         new_volume = max(user.volume - setting.join_volume, 0)
         user = con.user(chat_id=message.from_user.id, volume=new_volume)
-        
-        # ثبت کلید در Redis برای اطمینان از اینکه کاهش حجم فقط یک بار اعمال می‌شود
         cache.redis.set(leave_key, 'leaved')
-        
-        # در صورت نیاز، می‌توانید پیامی به کاربر ارسال کنید
-        # text = setting.texts.user_leave_text
-        # text = text.replace('user', user.full_name)
-        # text = text.replace('volume', str(setting.join_volume))
-        # await client.send_message(chat_id=message.from_user.id, text=text)
-
 
 
 
