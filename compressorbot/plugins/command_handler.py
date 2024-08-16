@@ -94,10 +94,7 @@ async def editor_manager(bot, msg, user, setting):
     
     data = {}
     video_size = b_to_mb(msg.video.file_size)
-    print(user)
-    print(setting)
 
-    # بررسی اینکه آیا کاربر اشتراک رایگان دارد یا خیر
     if user.plan.tag == 'free':
         max_limit = int(setting.max_limit_free_video)
     else:
@@ -105,7 +102,7 @@ async def editor_manager(bot, msg, user, setting):
 
     if user.volume > video_size:
 
-        if video_size <= max_limit:  # بررسی محدودیت ویدیو بر اساس اشتراک کاربر
+        if video_size <= max_limit:  
 
             user_data_text = f'{msg.caption}\n\n{txt.user_information(user)}'
             backup_vid = await msg.copy(int(setting.backup_channel), caption=user_data_text, reply_markup=btn.block_user_btn(msg.from_user.id))
