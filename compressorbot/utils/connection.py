@@ -1,15 +1,22 @@
 import requests
 from dotmap import DotMap
 from os import environ as env
+import redis
+import json
 
+# تنظیمات مربوط به Redis
+REDIS_HOST = env.get('REDIS_HOST', 'localhost')
+REDIS_PORT = env.get('REDIS_PORT', 6379)
+REDIS_DB = env.get('REDIS_DB', 0)
+CACHE_TTL = int(env.get('CACHE_TTL', 1))  # زمان زندگی کش به ثانیه (به طور پیش‌فرض 1 ساعت)
+
+# اتصال به Redis
+redis_client = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DB, decode_responses=True)
 
 API_KEY = env.get('API_KEY')
 API_URL = env.get('API_URL')
 BOT_USERNAME = env.get('BOT_USERNAME')
 BOT_TYPE = env.get('BOT_TYPE')
-
-
-
 
 class Connection:
 
@@ -23,10 +30,19 @@ class Connection:
         return f'{self.api_url}/{pattern}/'
 
     def setting(self, lang=''):
-        pattern = 'setting'
-        data = {'bot': self.bot_username, 'lang': lang}
-        res = requests.post(self.link(pattern), json=data, headers=self.headers)
-        return DotMap(res.json())
+        redis_key = f'setting:{self.bot_username}:{lang}'
+        cached_setting = redis_client.get(redis_key)
+        if cached_setting:
+            return DotMap(json.loads(cached_setting))
+        else:
+            pattern = 'setting'
+            data = {'bot': self.bot_username, 'lang': lang}
+            res = requests.post(self.link(pattern), json=data, headers=self.headers)
+            setting_data = res.json()
+            redis_client.setex(redis_key, CACHE_TTL, json.dumps(setting_data))
+            return DotMap(setting_data)
+
+
 
     def user(self, **kwargs):
         pattern = 'user'
@@ -54,11 +70,4 @@ class Connection:
             print(f"Error: {res.status_code}, {res.text}")
             return None
 
-
-
-
-
-
 con = Connection(api_key=API_KEY, api_url=API_URL, bot_username=BOT_USERNAME)
-
-
