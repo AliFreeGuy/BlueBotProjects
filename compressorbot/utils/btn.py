@@ -96,6 +96,17 @@ def join_channels_url(channels , btn_name):
 
 
 
+def add_volume_join_btn(channels ):
+    buttons = []
+    if channels :
+        for  channel in channels:
+            text = channel.name
+            buttons.append([InlineKeyboardButton(text=text, url=channel.link)])
+        return InlineKeyboardMarkup(buttons)
+    return buttons
+
+
+
 def ads_btn(ads):
     buttons = []
     if ads :

@@ -13,14 +13,12 @@ from django.utils.translation import gettext_lazy as _
 class CompressorSettingModel(BaseBotSettingModel):
     max_limit_video = models.PositiveBigIntegerField()
     max_limit_free_video = models.PositiveBigIntegerField(default=100)
-    max_limit_text = models.TextField(default='متن حجم مجاز')
     quality_1 =  models.IntegerField(default=1)
     quality_2 =  models.IntegerField(default=1)
     quality_3 = models.IntegerField(default=1)
     watermark_text = models.CharField(null=True , blank=True , max_length=128)
     watermark_color = models.CharField(max_length=128 , null=True , blank=True )
     watermark_size = models.PositiveIntegerField(null=True , blank=True)
-
 
     ref_volume = models.PositiveBigIntegerField(default=0)
     join_volume = models.PositiveBigIntegerField(default=0)
@@ -179,6 +177,7 @@ class CompressorTextModel(models.Model):
     placeholder_text = models.CharField(max_length=128 , default='ویدیو ارسال کنید ...')
     editor_progress_text = models.TextField(default='متن هنگام ادیت ویدیو ....')
     plans_text = models.TextField(default='متن اشتراک ها')
+    max_limit_text = models.TextField(default='متن حجم مجاز')
 
     profile_btn = models.CharField(max_length=25 , default='پروفایل')
     setting_btn = models.CharField(max_length=25 , default='تنظیمات')
@@ -194,6 +193,7 @@ class CompressorTextModel(models.Model):
     add_volume_with_join_text = models.TextField(default='متن افزایش حجم با جوین')
     add_volume_with_ref_text = models.TextField(default='متن افزایش حجم با زیرمجموعه')
     user_ref_text = models.TextField(default='متن وقتی که کاربر زیر مجموعه میگیره و ارسال میشه بهش میگه این کاربر وارد ربات شد' )
+    user_join_text = models.TextField(default='متن وقتی کاربر عضو کانال ها برای افزایش حجم میشه ' ,)
 
 
     class Meta:

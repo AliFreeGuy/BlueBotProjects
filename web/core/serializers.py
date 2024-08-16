@@ -19,6 +19,7 @@ class ChannelsSerializer(serializers.ModelSerializer):
         model = ChannelsModel
         fields = '__all__'
 
+
 class AdsSerializer(serializers.ModelSerializer):
     class Meta:
         model = AdsModels
@@ -48,6 +49,7 @@ class LanguagesSerializer(serializers.ModelSerializer):
 
 class CompressorSettingSerializer(serializers.ModelSerializer):
     channels = ChannelsSerializer(many=True, read_only=True)
+    add_volume_channels = ChannelsSerializer(many = True , read_only = True)
     ads = AdsSerializer(many=True, read_only=True)
     bot = BotsSerializer(read_only=True)
     plans = serializers.SerializerMethodField()
