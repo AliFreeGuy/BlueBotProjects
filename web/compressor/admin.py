@@ -2,7 +2,7 @@ import jdatetime
 from django.contrib import admin
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-from .models import CompressorSettingModel, CompressorPlansModel, CompressorUser, CompressorTextModel, UserRefModel
+from .models import CompressorSettingModel, CompressorPlansModel, CompressorUser, CompressorTextModel
 
 # تابع تبدیل تاریخ میلادی به شمسی
 def to_jalali(date):
@@ -61,12 +61,12 @@ class CompressorTextAdmin(admin.ModelAdmin):
     list_display = ['bot', 'lang']
     search_fields = ['bot', 'lang']
 
-# ثبت مدل UserRefModel در ادمین
-@admin.register(UserRefModel)
-class UserRefAdmin(admin.ModelAdmin):
-    list_display = ['user', 'ref', 'bot', 'creation_jalali']
-    search_fields = ['user', 'ref', 'bot']
+# # ثبت مدل UserRefModel در ادمین
+# @admin.register(UserRefModel)
+# class UserRefAdmin(admin.ModelAdmin):
+#     list_display = ['user', 'ref', 'bot', 'creation_jalali']
+#     search_fields = ['user', 'ref', 'bot']
     
-    def creation_jalali(self, obj):
-        return to_jalali(obj.creation)
-    creation_jalali.short_description = 'creation'
+#     def creation_jalali(self, obj):
+#         return to_jalali(obj.creation)
+#     creation_jalali.short_description = 'creation'

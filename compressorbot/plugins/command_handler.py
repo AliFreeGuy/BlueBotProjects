@@ -22,17 +22,21 @@ async def handler_manager(bot, msg):
     else:setting = con.setting()
 
     btns = {
-        f'🎫 {setting.texts.profile_btn}': profile_handler,
-        f'🆘 {setting.texts.help_btn}': help_handler,
-        f'🧑‍✈️ {setting.texts.support_btn}': support_handler,
-        f'⚙️ {setting.texts.setting_btn}': setting_handler,
-        f'🎖 {setting.texts.plans_btn}': plans_handler,
+        f'{setting.texts.profile_btn}': profile_handler,
+        f'{setting.texts.help_btn}': help_handler,
+        f'{setting.texts.support_btn}': support_handler,
+        f'{setting.texts.setting_btn}': setting_handler,
+        f'{setting.texts.plans_btn}': plans_handler,
+        f'{setting.texts.add_volume_with_join_btn}' : add_volume_with_join_btn_handler,
+        f'{setting.texts.add_volume_with_ref_btn}' : add_volume_with_ref_btn_handler,
+        f'{setting.texts.add_volume_with_payment_btn}'  : add_volume_with_payment_btn_handler,
         '/privacy': privacy_handler ,
         '/start' : start_handler ,
         '/help' : help_handler,
         '/support' : support_handler ,
         '/setting' : setting_handler,
         '/plans' : plans_handler,
+        '🔙' : start_handler
     }
 
     if msg and msg.text:
@@ -41,8 +45,27 @@ async def handler_manager(bot, msg):
             await handler_func(bot, msg, user, setting)
 
 
+
+
+
+
+
+async def add_volume_with_payment_btn_handler(bot ,msg , user , setting ):
+    plans = setting.plans
+    await msg.reply_text(text=setting.texts.plans_text, quote=True , reply_markup = btn.plans_btn(plans , setting , user ))
+
+
+
+
+async def add_volume_with_ref_btn_handler(bot , msg , user , setting):
+    print('fuck you user ')
+
+async def add_volume_with_join_btn_handler(bot , msg , user , setting ):
+    print('hi user ')
+
+
 async def start_handler(bot , msg , user , setting ):
-    print(setting.admin)
+    print('hi user ')
     await msg.reply_text(setting.texts.start_text, quote=True, reply_markup = btn.user_panel_menu(setting , user))
 
 
@@ -60,7 +83,7 @@ async def support_handler(bot, msg, user, setting):
 
 async def plans_handler(bot, msg, user, setting):
     plans = setting.plans
-    await msg.reply_text(text=setting.texts.plans_text, quote=True , reply_markup = btn.plans_btn(plans , setting , user ))
+    await msg.reply_text(text=setting.texts.plans_text, quote=True , reply_markup = btn.add_volume_btn(plans , setting , user ))
 
 
 

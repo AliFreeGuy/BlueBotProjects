@@ -18,6 +18,24 @@ def plans_btn(plans , setting , user ):
     return InlineKeyboardMarkup(buttons)
 
 
+def add_volume_btn(plans , setting , user ):
+    add_volume_with_channel = f'{setting.texts.add_volume_with_join_btn}'
+    add_volume_with_join = f'{setting.texts.add_volume_with_ref_btn}'
+    add_volume_with_payment = f'{setting.texts.add_volume_with_payment_btn}'
+    back = f'🔙'
+
+    marks = [
+        [add_volume_with_channel],
+        [add_volume_with_join],
+        ]
+    
+    if plans :
+        marks.append([add_volume_with_payment])
+    marks.append([back])
+    
+    return ReplyKeyboardMarkup(marks, resize_keyboard=True, placeholder=setting.texts.placeholder_text)
+
+
 
 
 def payment_plan_btn(url , lang ):
@@ -40,11 +58,11 @@ def payment_plan_btn(url , lang ):
 
 
 def user_panel_menu(setting , user ):
-    setting_text = f'⚙️ {setting.texts.setting_btn}'
-    help_text = f'🆘 {setting.texts.help_btn}'
-    support_text = f'🧑‍✈️ {setting.texts.support_btn}'
-    profile_text = f'🎫 {setting.texts.profile_btn}'
-    plans_text = f'🎖 {setting.texts.plans_btn}'
+    setting_text = f'{setting.texts.setting_btn}'
+    help_text = f'{setting.texts.help_btn}'
+    support_text = f'{setting.texts.support_btn}'
+    profile_text = f'{setting.texts.profile_btn}'
+    plans_text = f'{setting.texts.plans_btn}'
 
     marks = [
         [setting_text, profile_text],

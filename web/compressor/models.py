@@ -1,5 +1,5 @@
 from django.db import models
-from core.models import BaseBotSettingModel
+from core.models import BaseBotSettingModel , ChannelsModel
 from accounts.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils import timezone
@@ -20,6 +20,14 @@ class CompressorSettingModel(BaseBotSettingModel):
     watermark_text = models.CharField(null=True , blank=True , max_length=128)
     watermark_color = models.CharField(max_length=128 , null=True , blank=True )
     watermark_size = models.PositiveIntegerField(null=True , blank=True)
+
+
+    ref_volume = models.PositiveBigIntegerField(default=0)
+    add_volume_channels = models.ManyToManyField(ChannelsModel, blank=True  , related_name='compressor_setting')
+    
+
+
+
 
 
 
@@ -167,7 +175,6 @@ class CompressorTextModel(models.Model):
     max_limit_payment_text = models.TextField(default='متن حداکثر شارژ حساب')
     setting_text = models.TextField(default='متن بخش تنظیمات ربات')
     user_profile_text = models.TextField(default='متن زیر اطلاعات پروفایل کاربر')
-    user_ref_text = models.TextField(default='متن دعوت کاربر')
     placeholder_text = models.CharField(max_length=128 , default='ویدیو ارسال کنید ...')
     editor_progress_text = models.TextField(default='متن هنگام ادیت ویدیو ....')
     plans_text = models.TextField(default='متن اشتراک ها')
@@ -177,7 +184,15 @@ class CompressorTextModel(models.Model):
     help_btn = models.CharField(max_length=25 , default='راهنما')
     support_btn  = models.CharField(max_length=25 , default='پشتیبانی')
     plans_btn = models.CharField(max_length=25 , default='اشتراک')
-    i_joined_btn_text = models.TextField(max_length=128 , default='عضو شدم')
+    i_joined_btn_text = models.CharField(max_length=128 , default='عضو شدم')
+
+    add_volume_with_ref_btn = models.CharField(max_length=128 , default='افزایش حجم با زیرمجموعه گیری')
+    add_volume_with_join_btn = models.CharField(max_length=128 , default='افزایش حجم با عضویت در کانال')
+    add_volume_with_payment_btn = models.CharField(max_length=128 , default='افزایش حجم با خرید اشتراک')
+
+    add_volume_with_join_text = models.TextField(default='متن افزایش حجم با جوین')
+    add_volume_with_ref_text = models.TextField(default='متن افزایش حجم با زیرمجموعه')
+
 
     class Meta:
         unique_together = ('bot', 'lang')
