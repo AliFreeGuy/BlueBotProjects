@@ -193,6 +193,7 @@ class CompressorTextModel(models.Model):
 
     add_volume_with_join_text = models.TextField(default='متن افزایش حجم با جوین')
     add_volume_with_ref_text = models.TextField(default='متن افزایش حجم با زیرمجموعه')
+    user_ref_text = models.TextField(default='متن وقتی که کاربر زیر مجموعه میگیره و ارسال میشه بهش میگه این کاربر وارد ربات شد' )
 
 
     class Meta:

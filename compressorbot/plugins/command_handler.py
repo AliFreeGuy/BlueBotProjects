@@ -8,7 +8,7 @@ from pyrogram.types import (InlineQueryResultArticle, InputTextMessageContent,
 from utils.utils import join_checker , file_checker , b_to_mb
 import random
 from utils.tasks import editor
-
+import json
 
 
 
@@ -41,12 +41,39 @@ async def handler_manager(bot, msg):
 
     if msg and msg.text:
         handler_func = btns.get(msg.text)
+
+        if msg.text.startswith('/start ref_'):
+            await user_ref_handler(bot , msg ,user , setting )
+
         if handler_func:
             await handler_func(bot, msg, user, setting)
+        
+        
 
 
 
+async def user_ref_handler(bot, msg, user, setting):
+    refer = msg.text.replace('/start ref_', '')
+    redis = cache.redis
+    ads = setting.ads
+    if str(refer) != str(msg.from_user.id):
+        ref_user_data = redis.get(f"user_ref:{str(msg.from_user.id)}:{refer}")
+        if not ref_user_data:
+            cache.redis.set(f"user_ref:{str(msg.from_user.id)}:{refer}", 'miomio')
+            new_volume = user.volume + setting.ref_volume
+            user = con.user(chat_id=refer, volume=new_volume)
 
+            text = setting.texts.user_ref_text
+            text = text.replace('refuser', msg.from_user.first_name)
+            text = text.replace('user', user.full_name)
+            text = text.replace('volume', str(setting.ref_volume))
+
+            await bot.send_message(chat_id=int(refer), text=text, reply_markup=btn.ads_btn(ads))
+            await start_handler(bot, msg, user, setting)
+        else:
+            await start_handler(bot, msg, user, setting)
+    else:
+        await start_handler(bot, msg, user, setting)
 
 
 
@@ -58,14 +85,18 @@ async def add_volume_with_payment_btn_handler(bot ,msg , user , setting ):
 
 
 async def add_volume_with_ref_btn_handler(bot , msg , user , setting):
-    print('fuck you user ')
+    ads = setting.ads
+    user_ref_link = f'https://t.me/{setting.bot.username}?start=ref_{msg.from_user.id}'
+    ref_text = f'{setting.texts.add_volume_with_ref_text}\n\n`{user_ref_link}`'
+    await msg.reply_text(ref_text , quote = True , reply_markup = btn.ads_btn(ads))
+
+
 
 async def add_volume_with_join_btn_handler(bot , msg , user , setting ):
     print('hi user ')
 
 
 async def start_handler(bot , msg , user , setting ):
-    print('hi user ')
     await msg.reply_text(setting.texts.start_text, quote=True, reply_markup = btn.user_panel_menu(setting , user))
 
 

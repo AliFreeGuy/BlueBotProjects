@@ -98,10 +98,12 @@ def join_channels_url(channels , btn_name):
 
 def ads_btn(ads):
     buttons = []
-    for  ad in ads:
-        if ad.url.startswith('https://t.me/'):
-            buttons.append([InlineKeyboardButton(text=ad.name, url=ad.url)])
-    return InlineKeyboardMarkup(buttons)
+    if ads :
+        for  ad in ads:
+            if ad.url.startswith('https://t.me/'):
+                buttons.append([InlineKeyboardButton(text=ad.name, url=ad.url)])
+        return InlineKeyboardMarkup(buttons)
+    return buttons
 
 
 
