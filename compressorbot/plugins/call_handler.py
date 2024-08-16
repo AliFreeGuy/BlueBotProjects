@@ -202,29 +202,6 @@ async def setting_handler(bot , call , user , setting  ):
 
 
 
-
-
-
-
-
-
-        
-
-    # try :
-    #     user = con.user(chat_id=call.from_user.id , full_name=call.from_user.first_name )
-    #     quality_data = call.data.replace('setting:' , '')
-
-    #     if user.quality == quality_data :
-    #         user = con.user(chat_id=call.from_user.id , full_name=call.from_user.first_name , quality='none')
-    #     else :
-    #         user = con.user(chat_id=call.from_user.id , full_name=call.from_user.first_name , quality=quality_data)
-    #     await bot.edit_message_text(chat_id = call.from_user.id , text = con.setting.setting_text , reply_markup = btn.setting_btn(user) , message_id = call.message.id )
-    # except Exception as e :
-    #     logger.info(str(e))
-
-
-
-
 async def joined_handler(bot , call  , user , setting ):
         
 

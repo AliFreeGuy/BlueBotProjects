@@ -23,6 +23,7 @@ class CompressorSettingModel(BaseBotSettingModel):
 
 
     ref_volume = models.PositiveBigIntegerField(default=0)
+    join_volume = models.PositiveBigIntegerField(default=0)
     add_volume_channels = models.ManyToManyField(ChannelsModel, blank=True  , related_name='compressor_setting')
     
 
