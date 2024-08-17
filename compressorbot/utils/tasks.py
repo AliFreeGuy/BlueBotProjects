@@ -157,11 +157,11 @@ def editor(self, data ):
             'center': "x=(w-tw)/2:y=(h-th)/2"
         }
 
-    position = position_mapping.get(watermark_position, "x=w-tw-10:y=h-th-10")
-    
-    cmd.extend([
-        "-vf", f"drawtext=text='{watermark}':fontcolor={watermark_color}@1.0:fontsize={watermark_size}:{position}"
-    ])
+        position = position_mapping.get(watermark_position, "x=w-tw-10:y=h-th-10")
+        
+        cmd.extend([
+            "-vf", f"drawtext=text='{watermark}':fontcolor={watermark_color}@1.0:fontsize={watermark_size}:{position}"
+        ])
 
     cmd.append(f'{file_path}/output.mp4')
     # # Process the video with ffmpeg and track progress
