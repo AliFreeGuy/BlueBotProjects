@@ -137,10 +137,9 @@ def editor(self, data ):
 
     cmd = [
     "ffmpeg", "-i", video_name,
-    "-r", "15",
     "-c:v", "libx265", 
     "-crf", str(crf_value),
-    "-preset", "medium",
+    "-preset", "fast",
     "-c:a", "aac",
     "-b:a", "64k",
     "-map_metadata", "0",
