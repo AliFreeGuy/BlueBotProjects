@@ -145,7 +145,7 @@ class CompressorUser(models.Model):
                 pass
 
         if not self.quality:
-            self.quality = 'quality_0'
+            self.quality = 'quality_2'
 
         super().save(*args, **kwargs)
 
