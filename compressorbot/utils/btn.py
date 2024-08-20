@@ -113,9 +113,8 @@ def ads_btn(ads):
         for  ad in ads:
             if ad.url.startswith('https://t.me/'):
                 buttons.append([InlineKeyboardButton(text=ad.name, url=ad.url)])
-        return InlineKeyboardMarkup(buttons)
-    return buttons
-
+    if buttons :return InlineKeyboardMarkup(buttons)
+    else :return buttons
 
 
 

@@ -17,7 +17,7 @@ import json
 @Client.on_message(filters.private & f.bot_is_on & f.user_is_join & f.user_is_active, group=1)
 async def handler_manager(bot, msg):
     
-    user = con.user(chat_id=msg.from_user.id)
+    user = con.user(chat_id = msg.from_user.id )
     if user.lang:setting = con.setting(lang=user.lang)
     else:setting = con.setting()
 
@@ -36,6 +36,7 @@ async def handler_manager(bot, msg):
         '/support' : support_handler ,
         '/setting' : setting_handler,
         '/plans' : plans_handler,
+        '/profile' : profile_handler,
         '🔙' : start_handler
     }
 
@@ -65,24 +66,25 @@ async def user_ref_handler(bot, msg, user, setting):
     refer = msg.text.replace('/start ref_', '')
     redis = cache.redis
     ads = setting.ads
-    if str(refer) != str(msg.from_user.id):
-        ref_user_data = redis.get(f"user_ref:{str(msg.from_user.id)}:{refer}")
-        if not ref_user_data:
-            cache.redis.set(f"user_ref:{str(msg.from_user.id)}:{refer}", 'miomio')
-            new_volume = user.volume + setting.ref_volume
-            user = con.user(chat_id=refer, volume=new_volume)
+    ref_key = f"user_ref:{refer}:{msg.from_user.id}"
 
+    if str(refer) != str(msg.from_user.id):
+        ref_user_data = redis.get(ref_key)
+        if not ref_user_data:
+            redis.set(ref_key, 'miomio')
+            ref_user = con.user( chat_id= int(refer))
+            new_volume = ref_user.volume + setting.ref_volume            
+            user = con.user(chat_id=ref_user.chat_id, volume=new_volume)
             text = setting.texts.user_ref_text
             text = text.replace('refuser', msg.from_user.first_name)
             text = text.replace('user', user.full_name)
             text = text.replace('volume', str(setting.ref_volume))
-
             await bot.send_message(chat_id=int(refer), text=text, reply_markup=btn.ads_btn(ads))
-            await start_handler(bot, msg, user, setting)
-        else:
-            await start_handler(bot, msg, user, setting)
+
+        await start_handler(bot, msg, user, setting)
     else:
         await start_handler(bot, msg, user, setting)
+
 
 
 
@@ -125,6 +127,7 @@ async def plans_handler(bot, msg, user, setting):
 
 async def profile_handler(bot, msg, user, setting):
     ads = setting.ads
+    print(ads)
     if ads:await msg.reply_text(txt.profile_text(user , setting), quote=True, reply_markup=btn.ads_btn(ads))
     else:await msg.reply_text(txt.profile_text(user , setting), quote=True)
 
@@ -266,8 +269,11 @@ async def join_listener(client, message):
 async def user_joined(client, message, setting, user):
     join_key = f'join_ref:{message.from_user.id}:{message.chat.id}'
     if not cache.redis.get(join_key):
+        print(user.volume)
         new_volume = user.volume + setting.join_volume
+        print(new_volume)
         user = con.user(chat_id=message.from_user.id, volume=new_volume)
+        print(user)
         cache.redis.set(join_key, 'joined')
         text = setting.texts.user_join_text
         text = text.replace('user', user.full_name)
