@@ -255,7 +255,7 @@ async def join_listener(client, message):
     channels = setting.add_volume_channels
     channel_chat_ids =[int(channel.chat_id) for channel in setting.add_volume_channels]
     
-git
+ 
     if int(message.chat.id ) in channel_chat_ids :
 
         if message.new_chat_member :
@@ -287,36 +287,3 @@ async def user_leaved(client, message, setting, user):
         new_volume = max(user.volume - setting.join_volume, 0)
         user = con.user(chat_id=message.from_user.id, volume=new_volume)
         cache.redis.set(leave_key, 'leaved')
-
-
-
-
-
-
-
-
-
-
-# @Client.on_inline_query()
-# async def answer(client, inline_query):
-#     setting = con.setting()
-#     random_sub_code = 'ffff'
-#     results = []
-#     admins_chat_id = [admin.chat_id for admin in setting.admin ]
-#     query = inline_query.query.split(' ')
-#     # if len(query) == 1 :
-        
-#     # for plan in plans :
-#     #         if inline_query.query == plan['tag']:
-#     #             sub_data = {'user' : 'none' , 'plan' : plan["tag"]}
-#     #             cache.redis.hmset(f'sub:{random_sub_code}' , sub_data)
-#     #             des_text = f'🌟 برای فعال سازی اشتراک خودتون بر روی دکمه زیر بزنید '
-#     #             results.append(
-#     #                     InlineQueryResultArticle(
-#     #                         title=plan['name_fa'],
-#     #                         input_message_content=InputTextMessageContent(f"{plan['des_fa']}\n\n{des_text}"),
-#     #                         description=plan['des_fa'],
-#     #                         reply_markup=btn.admin_inline_query(sub_code=random_sub_code)))
-
-#     if inline_query.from_user.id == admins_chat_id :
-#         await inline_query.answer(results ,cache_time=1)
