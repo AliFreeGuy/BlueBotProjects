@@ -255,7 +255,7 @@ async def join_listener(client, message):
     channels = setting.add_volume_channels
     channel_chat_ids =[int(channel.chat_id) for channel in setting.add_volume_channels]
     
-
+git
     if int(message.chat.id ) in channel_chat_ids :
 
         if message.new_chat_member :

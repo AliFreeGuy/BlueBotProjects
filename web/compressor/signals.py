@@ -1,7 +1,7 @@
-from django.db.models.signals import m2m_changed
+from django.db.models.signals import m2m_changed ,pre_save
 from django.dispatch import receiver
-from compressor.models import CompressorSettingModel, LanguagesModel, CompressorTextModel
-
+from compressor.models import CompressorSettingModel, LanguagesModel, CompressorTextModel , CompressorUser
+from core.tasks import send_message
 @receiver(m2m_changed, sender=CompressorSettingModel.langs.through)
 def handle_langs_change(sender, instance, action, pk_set, **kwargs):
     # دریافت تمام زبان‌ها بر اساس pk_set
@@ -32,3 +32,18 @@ def handle_langs_change(sender, instance, action, pk_set, **kwargs):
         print(f"All languages removed from CompressorSettingModel instance {instance.pk}")
         # حذف تمام CompressorTextModel مربوط به این bot
         CompressorTextModel.objects.filter(bot=instance.bot).delete()
+
+
+
+
+
+
+
+
+@receiver(pre_save, sender=CompressorUser)
+def plan_changed(sender, instance, **kwargs):
+    if instance.pk:
+        existing_instance = CompressorUser.objects.get(pk=instance.pk)
+        if existing_instance.plan != instance.plan:
+            text = instance.lang.texts.user_sub_change_text
+            send_message.delay_on_commit(chat_id = instance.user.chat_id  , text=text , bot_id = instance.bot.id )

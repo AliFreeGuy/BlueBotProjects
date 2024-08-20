@@ -139,11 +139,12 @@ def editor(self, data ):
     "ffmpeg", "-i", video_name,
     "-c:v", "libx265", 
     "-crf", str(crf_value),
-    "-preset", "fast",
+    "-preset", "ultrafast",  # استفاده از پریست ultrafast
     "-c:a", "aac",
     "-b:a", "64k",
     "-map_metadata", "0",
     "-movflags", "+faststart",
+    "-threads", "16",  # استفاده از 16 هسته پردازنده
 ]
 
     # بررسی وجود واترمارک و تنظیم موقعیت آن

@@ -178,7 +178,7 @@ class CompressorTextModel(models.Model):
     editor_progress_text = models.TextField(default='متن هنگام ادیت ویدیو ....')
     plans_text = models.TextField(default='متن اشتراک ها')
     max_limit_text = models.TextField(default='متن حجم مجاز')
-
+    user_sub_change_text = models.TextField(default='متن وقتی که اشتراک کاربر تغییر میکنه')
     profile_btn = models.CharField(max_length=25 , default='پروفایل')
     setting_btn = models.CharField(max_length=25 , default='تنظیمات')
     help_btn = models.CharField(max_length=25 , default='راهنما')
