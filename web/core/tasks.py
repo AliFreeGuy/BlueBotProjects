@@ -10,6 +10,7 @@ from django.conf import settings
 import time
 import random
 
+
 logger = logging.getLogger(__name__)
 PROXY = {"scheme": 'socks5',
             "hostname": '127.0.0.1',
@@ -108,8 +109,10 @@ def message_sender(message_id):
                             chat_id = f'{msg_data["message"].split("/")[-2]}'
                             message = client.get_messages(chat_id=chat_id, message_ids=int(msg_id))
                             if btns:
+                                time.sleep(1)
                                 message.copy(int(msg_data['chat_id']), reply_markup=ads_btn(btns))
                             else:
+                                time.sleep(1)
                                 message.copy(int(msg_data['chat_id']))
 
                         else:
@@ -119,11 +122,15 @@ def message_sender(message_id):
                                     text=msg_data['message'],
                                     reply_markup=ads_btn(btns)
                                 )
+                                time.sleep(1)
+
                             else:
                                 client.send_message(
                                     chat_id=int(msg_data['chat_id']),
                                     text=msg_data['message']
                                 )
+                                time.sleep(1)
+
 
                     except Exception as e:
                         logging.warning(e)
@@ -168,6 +175,8 @@ def send_message(chat_id, text , bot_id):
     try:
         with client :
             client.send_message(int(chat_id) , text = text)
+            time.sleep(1)
+
 
     except Exception as e :
         # Handle the case where the user does not exist
