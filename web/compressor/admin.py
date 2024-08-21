@@ -50,6 +50,8 @@ class CompressorPlansAdmin(admin.ModelAdmin):
 class CompressorUserAdmin(admin.ModelAdmin):
     list_display = ['user', 'plan', 'bot', 'lang', 'volume', 'expiry_jalali']
     list_filter = [SubscriptionFilter]
+    search_fields = ['user__chat_id' , 'user__full_name']
+
     
     def expiry_jalali(self, obj):
         return to_jalali(obj.expiry)

@@ -185,7 +185,7 @@ class CompressorTextModel(models.Model):
     support_btn  = models.CharField(max_length=25 , default='پشتیبانی')
     plans_btn = models.CharField(max_length=25 , default='اشتراک')
     i_joined_btn_text = models.CharField(max_length=128 , default='عضو شدم')
-
+    add_volume_with_ref_text_share = models.TextField(default='متن اشتراک گذاری لینک دعوت کاربران')
     add_volume_with_ref_btn = models.CharField(max_length=128 , default='افزایش حجم با زیرمجموعه گیری')
     add_volume_with_join_btn = models.CharField(max_length=128 , default='افزایش حجم با عضویت در کانال')
     add_volume_with_payment_btn = models.CharField(max_length=128 , default='افزایش حجم با خرید اشتراک')

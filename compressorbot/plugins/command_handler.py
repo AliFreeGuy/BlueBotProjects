@@ -96,10 +96,11 @@ async def add_volume_with_payment_btn_handler(bot ,msg , user , setting ):
 
 
 async def add_volume_with_ref_btn_handler(bot , msg , user , setting):
-    ads = setting.ads
     user_ref_link = f'https://t.me/{setting.bot.username}?start=ref_{msg.from_user.id}'
     ref_text = f'{setting.texts.add_volume_with_ref_text}\n\n`{user_ref_link}`'
-    await msg.reply_text(ref_text , quote = True , reply_markup = btn.ads_btn(ads))
+    share_text = f'{setting.texts.add_volume_with_ref_text_share}%0A%0A{user_ref_link}'
+    share_link = f'https://t.me/share/url?url={share_text.replace(" " , "+")}'
+    await msg.reply_text(ref_text , quote = True , reply_markup = btn.ref_link(share_link))
 
 
 
@@ -127,7 +128,6 @@ async def plans_handler(bot, msg, user, setting):
 
 async def profile_handler(bot, msg, user, setting):
     ads = setting.ads
-    print(ads)
     if ads:await msg.reply_text(txt.profile_text(user , setting), quote=True, reply_markup=btn.ads_btn(ads))
     else:await msg.reply_text(txt.profile_text(user , setting), quote=True)
 
@@ -215,14 +215,14 @@ async def editor_manager(bot, msg, user, setting):
                     await msg.reply_text(setting.texts.editor_progress_text, quote=True, reply_markup=btn.vid_editor_quality(vid_key=vid_data_key))
 
             else:
-                user_not_sub_text = setting.user_not_sub_text
+                user_not_sub_text = setting.texts.user_not_sub_text
                 await msg.reply_text(user_not_sub_text, quote=True)
 
         else:
             await msg.reply_text(setting.max_limit_text, quote=True)
 
     else:
-        user_not_sub_text = setting.user_not_sub_text
+        user_not_sub_text = setting.texts.user_not_sub_text
         await msg.reply_text(user_not_sub_text, quote=True)
 
 

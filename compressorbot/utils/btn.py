@@ -118,6 +118,13 @@ def ads_btn(ads):
 
 
 
+def ref_link(url  ):
+    print(url)
+    buttons = [[InlineKeyboardButton(text='➕ دعوت از دوستان', url=url)]]
+    return InlineKeyboardMarkup(buttons)
+
+
+
 def block_user_btn(chat_id):
     buttons = [[InlineKeyboardButton(text='بلاک کاربر',callback_data=f'block_user:{chat_id}')]]
     return InlineKeyboardMarkup(buttons)
