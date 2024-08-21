@@ -215,15 +215,13 @@ async def editor_manager(bot, msg, user, setting):
                     await msg.reply_text(setting.texts.editor_progress_text, quote=True, reply_markup=btn.vid_editor_quality(vid_key=vid_data_key))
 
             else:
-                user_not_sub_text = setting.texts.user_not_sub_text
-                await msg.reply_text(user_not_sub_text, quote=True)
+                await msg.reply_text(setting.texts.user_not_sub_text, quote=True)
 
         else:
-            await msg.reply_text(setting.max_limit_text, quote=True)
+            await msg.reply_text(setting.texts.max_limit_text, quote=True)
 
     else:
-        user_not_sub_text = setting.texts.user_not_sub_text
-        await msg.reply_text(user_not_sub_text, quote=True)
+        await msg.reply_text(setting.texts.user_not_sub_text, quote=True)
 
 
 
