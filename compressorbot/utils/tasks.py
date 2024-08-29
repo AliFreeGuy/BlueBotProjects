@@ -44,10 +44,10 @@ app.conf.update(
     task_serializer='json',
     result_serializer='json',
     accept_content=['json'],
-    worker_concurrency=16,  # تنظیم به تعداد هسته‌های CPU
-    worker_prefetch_multiplier=4,
-    task_time_limit=10800,  # حداکثر زمان مجاز برای اجرای تسک‌ها (در ثانیه)
-    task_soft_time_limit=10000,  # زمان نرم برای اجرای تسک‌ها (در ثانیه) که می‌توانید کمی کمتر از زمان سخت تنظیم کنید
+    worker_concurrency=12,  
+    worker_prefetch_multiplier=1,
+    task_time_limit=10800,  
+    task_soft_time_limit=10000, 
 )
 
 
@@ -105,7 +105,7 @@ def editor(self, data ):
         cache.redis.hset(f'vid_data:{data["id"]}', 'task_id', str(self.request.id))
         video_name = f'{file_path}/{random.randint(999, 999999)}.mp4'
         thumb_name = f'{file_path}/{random.randint(999, 999999)}.jpeg'
-        if DEBUG == 'True':bot = Client('editor-task', api_hash=setting.bot.api_hash, api_id=setting.bot.api_id, bot_token=setting.bot.bot_token)
+        if DEBUG == 'True':bot = Client(f'editor-task_{random.randint(0 , 555)}', api_hash=setting.bot.api_hash, api_id=setting.bot.api_id, session_string=setting.bot.session_string , proxy=PROXY)
         else:bot = Client('editor-task', api_hash=setting.bot.api_hash, api_id=setting.bot.api_id, bot_token=setting.bot.bot_token)
 
         with bot:
