@@ -330,7 +330,7 @@ async def answer(client, inline_query):
                 input_message_content=InputTextMessageContent(
                    txt.user_information(user)
                 ),
-                description= f"حجم کاربر : {user.plan.volume}",
+                description= f"حجم کاربر : {user.volume}",
           
             )
         )
