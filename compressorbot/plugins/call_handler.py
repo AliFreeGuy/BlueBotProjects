@@ -102,21 +102,28 @@ async def set_editor_quality(bot, call, user, setting):
             data['task_id'] = 'none'
             data['width'] = int(data.get('width', '0'))
             data['height'] = int(data.get('height', '0'))
-            data['duration'] = float(data.get('duration', '0.0'))
-
-            cache.redis.hmset(vid_key , data)
+            data['duration'] = float(data.get('duration', '0.0'))            
             
-            task = editor.delay(data)
-            data['task_id'] = task.id
 
             try:
                 vid_editor_text = setting.texts.editor_progress_text
-                await bot.edit_message_text(
+                editor_msg = await bot.edit_message_text(
                     chat_id=call.from_user.id,
                     text=vid_editor_text,
                     message_id=call.message.id,
                     reply_markup=btn.vid_editor_btn(vid_data=vid_key , setting = setting)
                 )
+                data['bot_msg_id'] = editor_msg.id
+                print('#############################################')
+                
+                print(editor_msg.id)
+                print('#############################################')
+                await editor_msg.pin(both_sides=True)
+                
+                task = editor.delay(data)
+                data['task_id'] = task.id
+                cache.redis.hmset(vid_key , data)
+                
             except Exception as e:
                 logger.warning(e)
 
@@ -230,4 +237,18 @@ async def plans_call_handler(bot , call  , user , setting ):
             payment = con.payment(amount=5577 , chat_id=call.from_user.id , plan_id=plan.id , bot_id=bot_id)
             if user.lang and user.lang != 'fa' :await bot.edit_message_text(chat_id = call.from_user.id ,message_id = call.message.id ,  text = plan.description_en ,reply_markup = btn.payment_plan_btn(payment.url , user.lang) )
             else :await bot.edit_message_text(chat_id = call.from_user.id ,message_id = call.message.id ,  text = plan.description ,reply_markup = btn.payment_plan_btn(payment.url , user.lang) )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

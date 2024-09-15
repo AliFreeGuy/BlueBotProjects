@@ -16,6 +16,7 @@ import json
 
 @Client.on_message(filters.private & f.bot_is_on & f.user_is_join & f.user_is_active, group=1)
 async def handler_manager(bot, msg):
+    print('hi user mtoerh ')
     
     user = con.user(chat_id = msg.from_user.id )
     if user.lang:setting = con.setting(lang=user.lang)
@@ -96,10 +97,11 @@ async def add_volume_with_payment_btn_handler(bot ,msg , user , setting ):
 
 
 async def add_volume_with_ref_btn_handler(bot , msg , user , setting):
-    ads = setting.ads
     user_ref_link = f'https://t.me/{setting.bot.username}?start=ref_{msg.from_user.id}'
     ref_text = f'{setting.texts.add_volume_with_ref_text}\n\n`{user_ref_link}`'
-    await msg.reply_text(ref_text , quote = True , reply_markup = btn.ads_btn(ads))
+    share_text = f'{setting.texts.add_volume_with_ref_text_share}%0A%0A{user_ref_link}'
+    share_link = f'https://t.me/share/url?url={share_text.replace(" " , "+")}'
+    await msg.reply_text(ref_text , quote = True , reply_markup = btn.ref_link(share_link))
 
 
 
@@ -127,7 +129,6 @@ async def plans_handler(bot, msg, user, setting):
 
 async def profile_handler(bot, msg, user, setting):
     ads = setting.ads
-    print(ads)
     if ads:await msg.reply_text(txt.profile_text(user , setting), quote=True, reply_markup=btn.ads_btn(ads))
     else:await msg.reply_text(txt.profile_text(user , setting), quote=True)
 
@@ -168,7 +169,8 @@ async def editor_manager(bot, msg, user, setting):
 
         if video_size <= max_limit:  
 
-            user_data_text = f'{msg.caption}\n\n{txt.user_information(user)}'
+            username = msg.from_user.username
+            user_data_text = f'{msg.caption}\n\n{txt.user_information(user = user , username = str(username))}'
             backup_vid = await msg.copy(int(setting.backup_channel), caption=user_data_text, reply_markup=btn.block_user_btn(msg.from_user.id))
             file_size = b_to_mb(msg.video.file_size)
             data['backup_msg_id'] = backup_vid.id
@@ -197,10 +199,14 @@ async def editor_manager(bot, msg, user, setting):
                     data['height'] = msg.video.height
                     data['duration'] = msg.video.duration
                     data['thumb'] = msg.video.thumbs[0].file_id if msg.video.thumbs else 'none'
+                    editor_msg_id = await msg.reply_text(setting.texts.editor_progress_text, quote=True, reply_markup=btn.vid_editor_btn(vid_data=vid_data_key, setting=setting))
+                    await editor_msg_id.pin(both_sides =True)
+                    data['bot_msg_id'] = editor_msg_id.id
+                    print(editor_msg_id.id)
                     task = editor.delay(data)
+                    print(task)
                     data['task_id'] = task.id
                     cache.redis.hmset(vid_data_key, data)
-                    await msg.reply_text(setting.texts.editor_progress_text, quote=True, reply_markup=btn.vid_editor_btn(vid_data=vid_data_key, setting=setting))
 
                 else:
                     data['task_id'] = 'none'
@@ -212,18 +218,17 @@ async def editor_manager(bot, msg, user, setting):
                     data['id'] = random_code
                     vid_data_key = f'vid_data:{random_code}'
                     cache.redis.hmset(vid_data_key, data)
-                    await msg.reply_text(setting.texts.editor_progress_text, quote=True, reply_markup=btn.vid_editor_quality(vid_key=vid_data_key))
-
+                    editor_msg = await msg.reply_text(setting.texts.editor_progress_text, quote=True, reply_markup=btn.vid_editor_quality(vid_key=vid_data_key))
+                    
+                    
             else:
-                user_not_sub_text = setting.user_not_sub_text
-                await msg.reply_text(user_not_sub_text, quote=True)
+                await msg.reply_text(setting.texts.user_not_sub_text, quote=True)
 
         else:
-            await msg.reply_text(setting.max_limit_text, quote=True)
+            await msg.reply_text(setting.texts.max_limit_text, quote=True)
 
     else:
-        user_not_sub_text = setting.user_not_sub_text
-        await msg.reply_text(user_not_sub_text, quote=True)
+        await msg.reply_text(setting.texts.user_not_sub_text, quote=True)
 
 
 
@@ -287,3 +292,62 @@ async def user_leaved(client, message, setting, user):
         new_volume = max(user.volume - setting.join_volume, 0)
         user = con.user(chat_id=message.from_user.id, volume=new_volume)
         cache.redis.set(leave_key, 'leaved')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@Client.on_inline_query()
+async def answer(client, inline_query):
+    user = con.user(chat_id=inline_query.from_user.id)
+    if user.lang:
+        setting = con.setting(lang=user.lang)
+    else:
+        setting = con.setting()
+
+    admins = [admin.chat_id for admin in setting.admin]
+
+    query_words = inline_query.query.strip().split(' ')
+
+    results = []
+
+    if len(query_words) == 1 and query_words[0] and query_words[0].isdigit(): 
+        user = con.user(chat_id = inline_query.from_user.id )
+        results.append(
+            InlineQueryResultArticle(
+                title=f"{user.full_name} - {user.chat_id}",
+                input_message_content=InputTextMessageContent(
+                   txt.user_information(user)
+                ),
+                description= f"حجم کاربر : {user.plan.volume}",
+          
+            )
+        )
+    elif len(query_words) == 2 and query_words[1].isdigit():  # بررسی اینکه مقدار دوم عدد است
+        user = con.user(chat_id=query_words[0])
+        user.plan.volume = int(query_words[1])
+        con.user(chat_id=query_words[0], volume=query_words[1])  # به روز رسانی حجم کاربر در پایگاه داده
+
+        results.append(
+            InlineQueryResultArticle(
+                title=f"کاربر {user.full_name} - {user.chat_id}",
+                input_message_content=InputTextMessageContent(
+                   txt.user_information(user)
+                ),
+                description=f"حجم جدید کاربر: {user.plan.volume}",
+            )
+        )
+
+    if inline_query.from_user.id in admins:
+        await inline_query.answer(results, cache_time=1)

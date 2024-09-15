@@ -2,11 +2,10 @@ from pyrogram.errors import UserNotParticipant
 import os
 import uuid
 import jdatetime
-from utils import cache
+from utils import cache , logger
 from utils.connection import con
-
-
-
+import shutil
+import os
 
 
 # def gif_code():
@@ -58,6 +57,22 @@ def file_checker(unique_id , quality):
         if vid.get('unique_id') == unique_id and vid.get('quality') == quality and vid.get('file_id') :
             vid_data = vid
     return vid_data
+
+
+def is_heavy_task(data):
+    try:
+        # ابتدا بررسی می‌کنیم که آیا مقدار به عدد صحیح قابل تبدیل است
+        file_size = int(data['file_size'])
+    except ValueError:
+        try:
+            # اگر مقدار به عدد صحیح قابل تبدیل نبود، آن را به عدد اعشاری تبدیل می‌کنیم
+            file_size = float(data['file_size'])
+        except ValueError:
+            # اگر مقدار به هیچکدام از اینها قابل تبدیل نبود، False برمی‌گردد
+            return False
+    
+    # مقایسه مقدار file_size با 100
+    return file_size > 100
 
 
 
@@ -141,8 +156,15 @@ def b_to_mb(data):
     return float(file_size)
 
 
+
+
 def delet_dir(path):
-        os.system(f"rm -rf {path}")
+    if os.path.exists(path):
+        shutil.rmtree(path)
+        logger.info(f'folder {path} deleting .')
+    else:
+        logger.error(f"Directory {path} does not exist.")
+
 
 def random_code():
     return uuid.uuid4()
