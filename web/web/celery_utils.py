@@ -9,8 +9,8 @@ app = Celery('web')
 app.config_from_object('django.conf:settings', namespace='CELERY')
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 
-app.conf.broker_url = 'redis://localhost:6379/1'
-app.conf.result_backend = 'redis://localhost:6379/1'
+app.conf.broker_url = 'redis://redis:6379/1'
+app.conf.result_backend = 'redis://redis:6379/1'
 app.conf.task_serializer = 'json'
 app.conf.result_serializer = 'pickle'
 app.conf.accept_content = ['json' , 'pickle'] 

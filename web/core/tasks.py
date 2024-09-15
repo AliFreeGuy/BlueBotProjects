@@ -83,7 +83,6 @@ def message_sender(message_id):
                         session_string=msg_data['session'],
                         api_id=int(msg_data['api_id']),
                         api_hash=msg_data['api_hash'],
-                        proxy=PROXY
                     )
                 else:
                     client = Client(
@@ -163,7 +162,6 @@ def send_message(chat_id, text , bot_id):
                 session_string=bot.session_string,
                 api_id=bot.api_id,
                 api_hash=bot.api_hash,
-                proxy=PROXY
             )
     else:
             client = Client(

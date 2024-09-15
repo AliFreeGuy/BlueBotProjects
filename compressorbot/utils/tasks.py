@@ -37,7 +37,7 @@ from utils.utils import delet_dir  , convert_data_types  , b_to_mb
 
 
 r = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DB, decode_responses=True)
-app = Celery('tasks', broker=f'redis://localhost:6379/5', backend=f'redis://localhost:6379/5')
+app = Celery('tasks', broker=f'redis://{REDIS_HOST}:{REDIS_PORT}/5', backend=f'redis://{REDIS_HOST}:{REDIS_PORT}/5')
 app.conf.timezone = 'UTC'
 
 app.conf.update(
