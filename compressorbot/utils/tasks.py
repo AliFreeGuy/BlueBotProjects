@@ -151,7 +151,7 @@ def editor(self, data ):
                 "-vcodec", "libx265",          # کدک ویدیو libx264
                 "-crf", str(crf_value), 
                 "-c:a", "aac",                 # کدک صدا
-                "-b:a", "48k",                 # کاهش بیت‌ریت صدا
+                "-b:a", "96k",                 # کاهش بیت‌ریت صدا
                 "-preset", "fast",           # تنظیم سرعت فشرده‌سازی
             ]
 

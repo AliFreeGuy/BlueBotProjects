@@ -310,20 +310,15 @@ async def user_leaved(client, message, setting, user):
 
 @Client.on_inline_query()
 async def answer(client, inline_query):
-    user = con.user(chat_id=inline_query.from_user.id)
-    if user.lang:
-        setting = con.setting(lang=user.lang)
-    else:
-        setting = con.setting()
-
+    setting = con.setting()
     admins = [admin.chat_id for admin in setting.admin]
-
     query_words = inline_query.query.strip().split(' ')
 
     results = []
 
     if len(query_words) == 1 and query_words[0] and query_words[0].isdigit(): 
-        user = con.user(chat_id = inline_query.from_user.id )
+        user = con.user(chat_id = query_words[0] )
+  
         results.append(
             InlineQueryResultArticle(
                 title=f"{user.full_name} - {user.chat_id}",
@@ -334,18 +329,17 @@ async def answer(client, inline_query):
           
             )
         )
-    elif len(query_words) == 2 and query_words[1].isdigit():  # بررسی اینکه مقدار دوم عدد است
+    elif len(query_words) == 2 and query_words[1].isdigit():  
+        user = con.user(chat_id=query_words[0], volume=query_words[1]) 
+        print(user)
         user = con.user(chat_id=query_words[0])
-        user.plan.volume = int(query_words[1])
-        con.user(chat_id=query_words[0], volume=query_words[1])  # به روز رسانی حجم کاربر در پایگاه داده
-
         results.append(
             InlineQueryResultArticle(
                 title=f"کاربر {user.full_name} - {user.chat_id}",
                 input_message_content=InputTextMessageContent(
                    txt.user_information(user)
                 ),
-                description=f"حجم جدید کاربر: {user.plan.volume}",
+                description=f"حجم جدید کاربر: {user.volume}",
             )
         )
 
