@@ -145,16 +145,29 @@ def editor(self, data ):
 
 
 
+
             cmd = [
                 "ffmpeg", "-i", video_name,    # نام فایل ورودی
-                "-vcodec", "libx264",          # کدک ویدیو libx264
+                "-vcodec", "libx265",          # کدک ویدیو libx264
                 "-crf", str(crf_value), 
-                "-c:a", "aac",
-                "-b:a", "64k",
-                "-preset", "fast",             # استفاده از preset سریع‌تر
-                # "-tune", "film",               # تنظیمات مخصوص فیلم
-                                   # نام فایل خروجی
+                "-c:a", "aac",                 # کدک صدا
+                "-b:a", "48k",                 # کاهش بیت‌ریت صدا
+                "-preset", "fast",           # تنظیم سرعت فشرده‌سازی
             ]
+
+            # cmd = [
+            #     "ffmpeg", "-i", video_name,    # نام فایل ورودی
+            #     "-vcodec", "libx264",          # کدک ویدیو libx264
+            #     "-crf", str(crf_value), 
+            #     "-c:a", "aac",
+            #     "-b:a", "64k",
+            #     "-preset", "fast",             # استفاده از preset سریع‌تر
+            #     # "-tune", "film",               # تنظیمات مخصوص فیلم
+            #                        # نام فایل خروجی
+            # ]
+            
+            
+            
         #     cmd = [
         #     "ffmpeg", "-i", video_name,
         #     "-c:v", "libx265", 
