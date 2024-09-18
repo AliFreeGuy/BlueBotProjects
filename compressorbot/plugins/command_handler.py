@@ -135,7 +135,7 @@ async def support_handler(bot, msg, user, setting):
 
 async def plans_handler(bot, msg, user, setting):
     plans = setting.plans
-    await msg.reply_text(text=setting.texts.plans_text, quote=True , reply_markup = btn.add_volume_btn(plans , setting , user ))
+    await msg.reply_text(text=setting.texts.add_vlime_text, quote=True , reply_markup = btn.add_volume_btn(plans , setting , user ))
 
 
 

@@ -60,10 +60,36 @@ async def callback_manager(bot, call):
     elif status == 'unblock_user' :
         await unblock_user(bot , call )
     
+    elif status == 'add_volume' : 
+        await add_volume_handler(bot , call , user , setting )
+    
 
 
 
 
+
+async def add_volume_handler(bot , call , user , setting ):
+    status = call.data.split(':')[1]
+    
+    if status == 'channel' : 
+        
+        user_ref_link = f'https://t.me/{setting.bot.username}?start=ref_{call.from_user.id}'
+        ref_text = f'{setting.texts.add_volume_with_ref_text}\n\n`{user_ref_link}`'
+        share_text = f'{setting.texts.add_volume_with_ref_text_share}%0A%0A{user_ref_link}'
+        share_link = f'https://t.me/share/url?url={share_text.replace(" " , "+")}'
+        await bot.edit_message_text(chat_id = call.from_user.id , message_id = call.message.id  ,text = ref_text  , reply_markup = btn.ref_link(share_link))
+
+
+    elif status == 'join' : 
+        
+        channels = setting.add_volume_channels
+        text = setting.texts.add_volume_with_join_text
+        await bot.edit_message_text(chat_id = call.from_user.id , message_id = call.message.id ,text = text , reply_markup = btn.add_volume_join_btn(channels))
+
+
+    elif status == 'back' :
+            plans = setting.plans
+            await bot.edit_message_text(chat_id = call.from_user.id , text=setting.texts.add_vlime_text, message_id=call.message.id , reply_markup = btn.add_volume_btn(plans , setting , user ))
 
 
 async def block_user(bot , call ):

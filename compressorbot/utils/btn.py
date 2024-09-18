@@ -19,21 +19,13 @@ def plans_btn(plans , setting , user ):
 
 
 def add_volume_btn(plans , setting , user ):
+    buttons = []
+    
     add_volume_with_channel = f'{setting.texts.add_volume_with_join_btn}'
     add_volume_with_join = f'{setting.texts.add_volume_with_ref_btn}'
-    # add_volume_with_payment = f'{setting.texts.add_volume_with_payment_btn}'
-    back = f'🔙'
-
-    marks = [
-        [add_volume_with_channel],
-        [add_volume_with_join],
-        ]
-    
-    # if plans :
-    #     marks.append([add_volume_with_payment])
-    marks.append([back])
-    
-    return ReplyKeyboardMarkup(marks, resize_keyboard=True, placeholder=setting.texts.placeholder_text)
+    buttons.append([InlineKeyboardButton(text=add_volume_with_channel,callback_data=f'add_volume:channel')])
+    buttons.append([InlineKeyboardButton(text=add_volume_with_join,callback_data=f'add_volume:join')])
+    return InlineKeyboardMarkup(buttons)
 
 
 
@@ -113,8 +105,21 @@ def add_volume_join_btn(channels ):
         for  channel in channels:
             text = channel.name
             buttons.append([InlineKeyboardButton(text=text, url=channel.link)])
-        return InlineKeyboardMarkup(buttons)
-    return buttons
+        
+    
+    buttons.append([InlineKeyboardButton(text='برگشت 🔙', callback_data='add_volume:back')])
+    return InlineKeyboardMarkup(buttons)
+
+
+
+def ref_link(url  ):
+    print(url)
+    buttons = [[InlineKeyboardButton(text='برگشت 🔙', callback_data='add_volume:back'),InlineKeyboardButton(text='➕ دعوت از دوستان', url=url)]]
+    return InlineKeyboardMarkup(buttons)
+
+
+
+
 
 
 
@@ -128,11 +133,6 @@ def ads_btn(ads):
     else :return buttons
 
 
-
-def ref_link(url  ):
-    print(url)
-    buttons = [[InlineKeyboardButton(text='➕ دعوت از دوستان', url=url)]]
-    return InlineKeyboardMarkup(buttons)
 
 
 
