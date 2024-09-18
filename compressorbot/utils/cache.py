@@ -7,7 +7,7 @@ def check_execution_type():
 
 execution_type = check_execution_type()
 if execution_type == 'docker':redis_host = config.REDIS_HOST
-else:redis_host = 'localhost'
+else:redis_host = 'redis'
 
 class CacheService:
     def __init__(self):

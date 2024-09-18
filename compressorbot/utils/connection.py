@@ -38,6 +38,10 @@ class Connection:
             pattern = 'setting'
             data = {'bot': self.bot_username, 'lang': lang}
             res = requests.post(self.link(pattern), json=data, headers=self.headers)
+            print('##################################')
+            print(res.text)
+            print('##################################')
+            
             setting_data = res.json()
             redis_client.setex(redis_key, CACHE_TTL, json.dumps(setting_data))
             return DotMap(setting_data)
