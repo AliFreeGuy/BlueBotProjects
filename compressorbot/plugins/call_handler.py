@@ -234,7 +234,7 @@ async def plans_call_handler(bot , call  , user , setting ):
     plan = None 
     for plan in setting.plans :
         if int(plan.id) ==  int(call_plan_data):
-            payment = con.payment(amount=5577 , chat_id=call.from_user.id , plan_id=plan.id , bot_id=bot_id)
+            payment = con.payment(amount=plan.price , chat_id=call.from_user.id , plan_id=plan.id , bot_id=bot_id)
             if user.lang and user.lang != 'fa' :await bot.edit_message_text(chat_id = call.from_user.id ,message_id = call.message.id ,  text = plan.description_en ,reply_markup = btn.payment_plan_btn(payment.url , user.lang) )
             else :await bot.edit_message_text(chat_id = call.from_user.id ,message_id = call.message.id ,  text = plan.description ,reply_markup = btn.payment_plan_btn(payment.url , user.lang) )
 

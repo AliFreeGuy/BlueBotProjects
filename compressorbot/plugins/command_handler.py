@@ -16,11 +16,23 @@ import json
 
 @Client.on_message(filters.private & f.bot_is_on & f.user_is_join & f.user_is_active, group=1)
 async def handler_manager(bot, msg):
-    print('hi user mtoerh ')
+    
+    
+    
+        
+    
     
     user = con.user(chat_id = msg.from_user.id )
     if user.lang:setting = con.setting(lang=user.lang)
     else:setting = con.setting()
+    
+    default_setting_key = f'default_setting:{msg.from_user.id}'
+    if not cache.redis.get(default_setting_key):
+        cache.redis.set(default_setting_key , 'added')
+        await setting_handler(bot, msg, user, setting)
+    
+        
+        
 
     btns = {
         f'{setting.texts.profile_btn}': profile_handler,
@@ -114,7 +126,7 @@ async def privacy_handler(bot, msg, user, setting):
 
 
 async def help_handler(bot, msg, user, setting):
-    await msg.reply_text(setting.texts.help_text, quote=True)
+    await msg.reply_text(setting.texts.help_text, quote=True , reply_markup = btn.support_btn(setting))
 
 
 async def support_handler(bot, msg, user, setting):
@@ -333,15 +345,19 @@ async def answer(client, inline_query):
         user = con.user(chat_id=query_words[0], volume=query_words[1]) 
         print(user)
         user = con.user(chat_id=query_words[0])
-        results.append(
-            InlineQueryResultArticle(
-                title=f"کاربر {user.full_name} - {user.chat_id}",
-                input_message_content=InputTextMessageContent(
-                   txt.user_information(user)
-                ),
-                description=f"حجم جدید کاربر: {user.volume}",
+        
+        if user : 
+            results.append(
+                InlineQueryResultArticle(
+                    title=f"کاربر {user.full_name} - {user.chat_id}",
+                    input_message_content=InputTextMessageContent(
+                    txt.user_information(user)
+                    ),
+                    description=f"حجم جدید کاربر: {user.volume}",
+                )
             )
-        )
+            
+            await client.send_message(chat_id = query_words[0] , text = f'♻️ حجم شما با موفقیت به {str(query_words[1])} مگابایت تغییر پیدا کرد .')
 
     if inline_query.from_user.id in admins:
-        await inline_query.answer(results, cache_time=1)
+        await inline_query.answer(results, cache_time=3)

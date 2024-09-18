@@ -9,6 +9,10 @@ from core.models import BotsModel
 from django.shortcuts import get_object_or_404 , render
 from . import serializers
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.authentication import TokenAuthentication
+from rest_framework import status, permissions
+
+
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework.views import APIView
@@ -39,17 +43,23 @@ from django.utils.translation import gettext_lazy as _
 
 
 
-sandbox = 'sandbox' if settings.DEBUG else 'www'
+# sandbox = 'sandbox' if settings.DEBUG else 'www'
+sandbox = 'www'
 ZP_API_REQUEST = f"https://{sandbox}.zarinpal.com/pg/rest/WebGate/PaymentRequest.json"
 ZP_API_VERIFY = f"https://{sandbox}.zarinpal.com/pg/rest/WebGate/PaymentVerification.json"
 ZP_API_STARTPAY = f"https://{sandbox}.zarinpal.com/pg/StartPay/"
-CallbackURL = 'http://127.0.0.1:8000/api/verify/'
+CallbackURL = 'http://91.107.246.207:3000/api/verify/'
 
 
 
 @method_decorator(csrf_exempt, name='dispatch')
 class PaymentCreateView(APIView):
+    authentication_classes = [TokenAuthentication, ]
+    permission_classes = [permissions.IsAuthenticated]
+    
+    
     def post(self, request):
+        
         amount = request.data.get('amount')
         chat_id = request.data.get('chat_id')
         plan_id = request.data.get('plan_id')

@@ -21,7 +21,7 @@ def plans_btn(plans , setting , user ):
 def add_volume_btn(plans , setting , user ):
     add_volume_with_channel = f'{setting.texts.add_volume_with_join_btn}'
     add_volume_with_join = f'{setting.texts.add_volume_with_ref_btn}'
-    add_volume_with_payment = f'{setting.texts.add_volume_with_payment_btn}'
+    # add_volume_with_payment = f'{setting.texts.add_volume_with_payment_btn}'
     back = f'🔙'
 
     marks = [
@@ -29,8 +29,8 @@ def add_volume_btn(plans , setting , user ):
         [add_volume_with_join],
         ]
     
-    if plans :
-        marks.append([add_volume_with_payment])
+    # if plans :
+    #     marks.append([add_volume_with_payment])
     marks.append([back])
     
     return ReplyKeyboardMarkup(marks, resize_keyboard=True, placeholder=setting.texts.placeholder_text)
@@ -57,17 +57,28 @@ def payment_plan_btn(url , lang ):
 
 
 
+
+
+
+def support_btn(setting ):
+    buttons = []
+    buttons.append([InlineKeyboardButton(text=setting.texts.support_text_btn, url=f'https://t.me/{setting.texts.support_username}')])
+    return InlineKeyboardMarkup(buttons)
+
+    
 def user_panel_menu(setting , user ):
     setting_text = f'{setting.texts.setting_btn}'
     help_text = f'{setting.texts.help_btn}'
     support_text = f'{setting.texts.support_btn}'
     profile_text = f'{setting.texts.profile_btn}'
     plans_text = f'{setting.texts.plans_btn}'
-
+    payment_sub = f'{setting.texts.add_volume_with_payment_btn}'
+    
     marks = [
-        [setting_text, profile_text],
+        
         [plans_text],
-        [support_text, help_text],]
+        [payment_sub, profile_text],
+        [help_text, setting_text],]
     
     for miniapp in setting.ads:
         if not miniapp.url.startswith('https://t.me/'):

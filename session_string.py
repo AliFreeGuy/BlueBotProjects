@@ -9,7 +9,7 @@ PROXY = {"scheme": 'socks5',
 
 # BOT
 BOT_NAME='virtual-number-bot'
-BOT_TOKEN='6951143872:AAFh1gG33H0uFH43xKfEb04wOeDk1umAnlA'
+BOT_TOKEN='2078074494:AAEM7xEZ_dtgpXKNkKtqcpzPAUsXCAkp2I0'
 API_ID='26801362'
 API_HASH='ed9c1202ed0cf85a66f8d5b6b392fd1e'
 WORK_DIR='/tmp'
