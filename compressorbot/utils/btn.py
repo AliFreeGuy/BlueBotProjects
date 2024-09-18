@@ -11,9 +11,9 @@ from utils.connection import con
 def plans_btn(plans , setting , user ):
     buttons = []
     for  plan in plans:
-        if user.lang and user.lang != 'fa' and plan.tag != 'free':
+        if user.lang and user.lang != 'fa' and plan.tag != 'free'and plan.price !=0:
             buttons.append([InlineKeyboardButton(text=plan.name_en,callback_data=f'plans:{plan.id}')])
-        if user.lang and user.lang == 'fa' and plan.tag != 'free':
+        if user.lang and user.lang == 'fa' and plan.tag != 'free' and plan.price !=0:
             buttons.append([InlineKeyboardButton(text=plan.name,callback_data=f'plans:{plan.id}')])
     return InlineKeyboardMarkup(buttons)
 
