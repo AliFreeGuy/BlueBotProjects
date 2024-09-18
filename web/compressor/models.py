@@ -191,6 +191,7 @@ class CompressorTextModel(models.Model):
     add_volume_with_join_btn = models.CharField(max_length=128 , default='افزایش حجم با عضویت در کانال')
     add_volume_with_payment_btn = models.CharField(max_length=128 , default='افزایش حجم با خرید اشتراک')
     sign_text = models.TextField(default  = 'متن امضا زیر پیام ادیتور')
+    add_vlime_text = models.TextField(default = 'متن افزایش حجم رایگان')
 
     add_volume_with_join_text = models.TextField(default='متن افزایش حجم با جوین')
     add_volume_with_ref_text = models.TextField(default='متن افزایش حجم با زیرمجموعه')

@@ -13,7 +13,7 @@ class CacheService:
     def __init__(self):
         self.redis = redis.StrictRedis(
             connection_pool=redis.ConnectionPool(
-                host=redis_host, port=config.REDIS_PORT, db=config.REDIS_DB, decode_responses=True))
+                host=config.REDIS_HOST, port=config.REDIS_PORT, db=config.REDIS_DB, decode_responses=True))
 
 
 

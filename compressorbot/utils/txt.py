@@ -46,7 +46,7 @@ def profile_text(user, setting):
     # تولید متن پروفایل
     if user.lang == 'fa':
         text = f'''
-🆔 آیدی اختصاصی : {user_id}
+🆔 آیدی اختصاصی : `{user_id}`
 👤 نام کاربر : {full_name}
 📦 پلن فعال : {plan_name if expiry else 'خالی'}
 📊 حجم مانده : {volume_gb:.2f} گیگ
@@ -55,7 +55,7 @@ def profile_text(user, setting):
 {setting.texts.user_profile_text}'''
     else:
         text = f'''
-🆔 User ID: {user_id}
+🆔 User ID: `{user_id}`
 👤 Full Name: {full_name}
 📦 Active Plan: {plan_name if expiry else 'No Active Plan'}
 📊 Available Volume: {volume_gb:.2f} GB
@@ -112,7 +112,7 @@ def user_information(user , username=None):
         plan_name = 'خالی'
 
     text = f'''
-🆔 آیدی اختصاصی : {user_id}
+🆔 آیدی اختصاصی : `{user_id}`
 🆔 یوزرنیم : @{str(username)}
 👤 نام کاربر : {full_name}
 📦 پلن فعال : {user.plan.name}
