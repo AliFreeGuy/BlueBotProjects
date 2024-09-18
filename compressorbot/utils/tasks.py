@@ -92,6 +92,7 @@ def cancel_markup( callback_data , setting ):
 @app.task(name='tasks.editor', bind=True, default_retry_delay=1)
 def editor(self, data ):
     try :
+        start_time = time.time()
         main_data = data
         setting = con.setting(lang='fa')
         data = convert_data_types(data)
@@ -328,10 +329,17 @@ def editor(self, data ):
 
             # ارسال ویدیو
             output_data = bot.send_video(**send_params)
+            
+            end_time = time.time()
+            execution_time = end_time - start_time
+    
 
             
             try :
-                backup_caption = (main_data['backup_caption'] +f'\n❎ حجم قبلی: {main_data["file_size"]}\n✅ حجم جدید: {b_to_mb(output_data.video.file_size)}')
+                backup_caption = (main_data['backup_caption'] +
+                  f'\n❎ حجم قبلی: {main_data["file_size"]}' +
+                  f'\n✅ حجم جدید: {b_to_mb(output_data.video.file_size)}' +
+                  f'\n⏱ مدت زمان پردازش: {execution_time:.2f} ثانیه')
                 bot.edit_message_media(
                     chat_id = int(setting.backup_channel),
                     message_id=int(main_data['backup_msg_id']),
@@ -346,7 +354,6 @@ def editor(self, data ):
 
     except Exception as e :
         delet_dir(file_path)
-    
         logger.error(str(e))
 
 
