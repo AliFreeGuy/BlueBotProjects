@@ -71,7 +71,7 @@ async def callback_manager(bot, call):
 async def add_volume_handler(bot , call , user , setting ):
     status = call.data.split(':')[1]
     
-    if status == 'channel' : 
+    if status == 'join' : 
         
         user_ref_link = f'https://t.me/{setting.bot.username}?start=ref_{call.from_user.id}'
         ref_text = f'{setting.texts.add_volume_with_ref_text}\n\n`{user_ref_link}`'
@@ -80,7 +80,7 @@ async def add_volume_handler(bot , call , user , setting ):
         await bot.edit_message_text(chat_id = call.from_user.id , message_id = call.message.id  ,text = ref_text  , reply_markup = btn.ref_link(share_link))
 
 
-    elif status == 'join' : 
+    elif status == 'channel' : 
         
         channels = setting.add_volume_channels
         text = setting.texts.add_volume_with_join_text
