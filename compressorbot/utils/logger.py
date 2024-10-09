@@ -28,7 +28,7 @@ def get_logger():
     if not os.environ.get('DEBUG'):
         logger.setLevel(logging.INFO)
     else:
-        logger.setLevel(logging.DEBUG)
+        logger.setLevel(logging.INFO)
 
     console_handler = logging.StreamHandler()
     console_handler.setFormatter(CustomFormatter())

@@ -15,7 +15,6 @@ con = Connection(api_key=API_KEY, api_url=API_URL, bot_username=BOT_USERNAME)
 setting = con.setting()
 ADMIN_PANEL = env.get('ADMIN_PANEL')
 
-
 BOT_SESSION = setting.bot.session_string
 API_ID = setting.bot.api_id
 API_HASH = setting.bot.api_hash
@@ -25,9 +24,8 @@ WORK_DIR = env.get('WORK_DIR') or '/tmp'
 PROXY = {"scheme": env.get("PROXY_SCHEME"),
          "hostname": env.get("PROXY_HOSTNAME"),
          "port": int(env.get("PROXY_PORT"))}
-DEBUG = env.get('BOT_DEBUG')
+DEBUG = env.get('DEBUG')
 REDIS_HOST = env.get('REDIS_HOST')
 REDIS_PORT = env.get('REDIS_PORT')
 REDIS_DB= env.get('REDIS_DB')
 REDIS_PASS = env.get('REDIS_PASS')
-

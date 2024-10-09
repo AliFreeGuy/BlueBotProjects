@@ -15,6 +15,8 @@ def plans_btn(plans , setting , user ):
             buttons.append([InlineKeyboardButton(text=plan.name_en,callback_data=f'plans:{plan.id}')])
         if user.lang and user.lang == 'fa' and plan.tag != 'free':
             buttons.append([InlineKeyboardButton(text=plan.name,callback_data=f'plans:{plan.id}')])
+            
+    print(buttons)
     return InlineKeyboardMarkup(buttons)
 
 
@@ -23,8 +25,8 @@ def add_volume_btn(plans , setting , user ):
     
     add_volume_with_channel = f'{setting.texts.add_volume_with_join_btn}'
     add_volume_with_join = f'{setting.texts.add_volume_with_ref_btn}'
-    buttons.append([InlineKeyboardButton(text=add_volume_with_channel,callback_data=f'add_volume:channel')])
-    buttons.append([InlineKeyboardButton(text=add_volume_with_join,callback_data=f'add_volume:join')])
+    buttons.append([InlineKeyboardButton(text=add_volume_with_channel,callback_data=f'add_volume:join')])
+    buttons.append([InlineKeyboardButton(text=add_volume_with_join,callback_data=f'add_volume:channel')])
     return InlineKeyboardMarkup(buttons)
 
 

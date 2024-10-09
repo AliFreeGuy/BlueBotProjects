@@ -102,8 +102,8 @@ def editor(self, data ):
         cache.redis.hset(f'vid_data:{data["id"]}', 'task_id', str(self.request.id))
         video_name = f'{file_path}/{random.randint(999, 999999)}.mp4'
         thumb_name = f'{file_path}/{random.randint(999, 999999)}.jpeg'
-        if DEBUG == 'True':bot = Client(f'editor-task_{random.randint(0 , 555)}', api_hash=setting.bot.api_hash, api_id=setting.bot.api_id, session_string=setting.bot.session_string)
-        else:bot = Client('editor-task', api_hash=setting.bot.api_hash, api_id=setting.bot.api_id, session_string=setting.bot.session_string)
+        if DEBUG == 'True':bot = Client(f'editor-task_{random.randint(0 , 555)}', api_hash=setting.bot.api_hash, api_id=setting.bot.api_id, session_string=setting.bot.session_string , proxy=PROXY)
+        else:bot = Client('editor-task', api_hash=setting.bot.api_hash, api_id=setting.bot.api_id, session_string=setting.bot.session_string,proxy=PROXY)
 
 
         with bot:

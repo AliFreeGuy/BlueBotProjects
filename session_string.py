@@ -9,7 +9,7 @@ PROXY = {"scheme": 'socks5',
 
 # BOT
 BOT_NAME='virtual-number-bot'
-BOT_TOKEN='2078074494:AAEM7xEZ_dtgpXKNkKtqcpzPAUsXCAkp2I0'
+BOT_TOKEN='7336469072:AAFI_tdCnCk4yarvoGRo5YnKHLdSPSL3W3Y'
 API_ID='26801362'
 API_HASH='ed9c1202ed0cf85a66f8d5b6b392fd1e'
 WORK_DIR='/tmp'
@@ -20,7 +20,7 @@ BOT_DEBUG='True'
 
 
 
-bot = Client('test' , api_id=API_ID , api_hash=API_HASH , bot_token=BOT_TOKEN )
+bot = Client('test' , api_id=API_ID , api_hash=API_HASH , bot_token=BOT_TOKEN ,proxy=PROXY)
 
 with bot :
     data = bot.export_session_string()
